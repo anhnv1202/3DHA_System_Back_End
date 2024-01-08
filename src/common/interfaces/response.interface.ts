@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class BaseResponse<T> {
   @ApiProperty({
-    default: 200
+    default: 200,
   })
   code: number;
 

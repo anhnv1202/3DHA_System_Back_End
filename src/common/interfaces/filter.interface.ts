@@ -1,4 +1,4 @@
-import { Roles } from '#common/constants/global.const';
+import { Roles } from '@common/constants/global.const';
 
 export interface PaginationResult<T> {
   total: number;

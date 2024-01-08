@@ -6,10 +6,10 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { MongooseConfigService } from './config/mongo-config.service';
 import { ThrottlerConfigService } from './config/throttler-config.service';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -40,9 +40,9 @@ import { ThrottlerConfigService } from './config/throttler-config.service';
         global: true,
       }),
     }),
+    UserModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
-  // exports: [CommonModule],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

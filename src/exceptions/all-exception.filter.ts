@@ -1,6 +1,6 @@
-import { ErrorMessage } from '#common/constants/global.const';
-import { handleLogError } from '#common/utils/helper.utils';
-import { ExceptionFilter, Catch, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
+import { ErrorMessage } from '@common/constants/global.const';
+import { handleLogError } from '@common/utils/helper.utils';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
 import { Response } from 'express';
 import * as i18n from 'i18n';
 

@@ -1,13 +1,8 @@
-import {
-  BaseResponse,
-  SimplePagination,
-} from '@common/interfaces/response.interface';
-import { applyDecorators, Type } from '@nestjs/common';
+import { BaseResponse, PaginateResponse } from '@common/interfaces/response.interface';
+import { Type, applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, getSchemaPath } from '@nestjs/swagger';
 
-export const ApiPaginationResponse = <TModel extends Type<any>>(
-  model: TModel,
-) => {
+export const ApiPaginationResponse = <TModel extends Type<any>>(model: TModel) => {
   return applyDecorators(
     ApiOkResponse({
       schema: {
@@ -17,7 +12,7 @@ export const ApiPaginationResponse = <TModel extends Type<any>>(
             properties: {
               data: {
                 allOf: [
-                  { $ref: getSchemaPath(SimplePagination) },
+                  { $ref: getSchemaPath(PaginateResponse) },
                   {
                     properties: {
                       records: {

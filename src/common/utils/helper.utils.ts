@@ -1,11 +1,6 @@
-import { FindAndCountQuery, ValidateUniqueEntity } from '#common/interfaces/index.interface';
+import { DEFAULT_PAGINATION, QUERY_PARAM_PARSE } from '@common/constants/global.const';
+import { Pagination } from '@common/interfaces/filter.interface';
 import LogService from 'src/config/log.service';
-import { Brackets, FindOptionsWhere, SelectQueryBuilder } from 'typeorm';
-import * as i18n from 'i18n';
-import { DEFAULT_PAGINATION, QUERY_PARAM_PARSE } from '#common/constants/global.const';
-import { Pagination } from '#common/interfaces/filter.interface';
-import { InternalServerErrorException } from '@nestjs/common';
-
 export function handleLogError(error: any) {
   if (process.env.NODE_ENV === 'production') {
     LogService.logErrorFile(JSON.stringify(error));
@@ -52,93 +47,77 @@ export function getPagination(request: { query: unknown }): Pagination {
   return paginationParams;
 }
 
-export async function findAndCount<T>(params: FindAndCountQuery): Promise<[T[], number]> {
-  try {
-    const { pagination, relations, searchBy = [], entityManager, entity } = params;
-    const { size, page, sortBy, sortType, text, ...rest } = pagination;
+export const isNullOrUndefined = (value: any): boolean => value === null || value === undefined || value === '';
 
-    const repository = entityManager.getRepository(entity);
-    const columns = repository.metadata.columns.map((i) => i.propertyName);
+export const isStrEmpty = (value: any): boolean => isNullOrUndefined(value) || value.trim() === '';
 
-    let query: SelectQueryBuilder<T> = repository.createQueryBuilder('entity');
+export const isArrayNonEmpty = (value: any): boolean => !!(value && Array.isArray(value) && value.length);
 
-    if (relations && relations.length > 0) {
-      for (const relation of relations) {
-        query = query.leftJoinAndSelect(`entity.${relation}`, relation);
-      }
-    }
+export const mapToArray = (data: any) => {
+  return Array.isArray(data) ? data : [data];
+};
 
-    query = query.where((qb) => {
-      if (text && searchBy.length > 0) {
-        const textConditions = searchBy.map((key) => `entity.${key} ILIKE :text`);
-        qb.andWhere(new Brackets((subQb) => subQb.where(textConditions.join(' OR '), { text: `%${text}%` })));
-      }
+export const convertStringToDate = (str: string): Date => {
+  const covertDate = `${str.slice(0, 4)}-${str.slice(4, 6)}-${str.slice(6, 8)}T${str.slice(9, 11)}:${str.slice(
+    11,
+    13,
+  )}:${str.slice(13, 15)}.000Z`;
+  return new Date(covertDate);
+};
 
-      if (Object.keys(rest).length > 0) {
-        Object.keys(rest).forEach((key) => {
-          if (!columns.includes(key)) return;
+export const convertDate = (date: Date): string => {
+  const stringDate = new Date(date).toISOString();
+  return stringDate.split('-').join('').split(':').join('').split('.')[0] + 'Z';
+};
 
-          if (key === 'role' && Array.isArray(rest[key])) {
-            qb.andWhere(`entity.role In (:...roles)`, { roles: rest[key] });
-            return;
-          }
-
-          if (Array.isArray(rest[key])) {
-            qb.andWhere(`entity.${key} In (:...values)`, { values: rest[key] });
-            return;
-          }
-
-          qb.andWhere(`entity.${key} = :${key}`, { [key]: rest[key] });
-        });
-      }
-    });
-
-    if (sortBy && sortType) {
-      const [relation, column] = sortBy.split('.');
-      const isSortRelation = column && relations.includes(relation);
-      const entity = isSortRelation ? `${sortBy}` : `entity.${sortBy}`;
-      query = query.orderBy(entity, (sortType as any).toUpperCase(), 'NULLS FIRST');
-    }
-
-    if (!Number(page)) {
-      const [data, total] = await query.getManyAndCount();
-      return [data, total];
-    }
-
-    const [data, total] = await query
-      .skip((Number(page) - 1) * Number(size))
-      .take(Number(size))
-      .getManyAndCount();
-
-    return [data, total];
-  } catch (e) {
-    LogService.logInfo(e);
-    throw new InternalServerErrorException(e);
+export const isTwoObjectsEqual = (object1: any, object2: any) => {
+  const keys1 = Object.keys(object1);
+  const keys2 = Object.keys(object2);
+  if (keys1.length !== keys2.length) {
+    return false;
   }
-}
+  for (const key of keys1) {
+    const val1 = object1[key];
+    const val2 = object2[key];
+    const areObjects = isObject(val1) && isObject(val2);
+    if ((areObjects && !isTwoObjectsEqual(val1, val2)) || (!areObjects && val1 !== val2)) {
+      return false;
+    }
+  }
+  return true;
+};
 
-export async function validateUniqueEntity<R, DTO>(params: ValidateUniqueEntity<R, DTO>): Promise<string> {
-  const { next, repository, id } = params;
-  const record: R | null = await repository.findOne({ where: convertToMultiObject(next) });
-  if (!record || record?.['id'] === id) return '';
+export const isObject = (object: any) => object && typeof object === 'object';
 
-  let error: string;
-  Object.keys(next).forEach((key) => {
-    if (error) return;
-    if ([null, undefined, '', 0].includes(next[key])) return;
-    if (String(next[key]) === String(record[key])) error = key;
+export const filterUndefinedObjectField = (object: any) => {
+  const validKeys = Object.keys(object).filter((key) => !isNullOrUndefined(object[key]));
+  let result = {};
+  validKeys.forEach((key) => {
+    result = { ...result, [key]: object[key] };
+  });
+  return result;
+};
+
+export const convertToMappingObject = (array: any, key: string) => {
+  return Object.assign(
+    {},
+    ...array.map((item) => ({
+      [item[key].toString()]: item,
+    })),
+  );
+};
+
+export const convertToMappingObjectArray = (array: any, key: string) => {
+  const result = {};
+  array.forEach((item) => {
+    result[item[key]] ? result[item[key]].push(item) : (result[item[key]] = [item]);
   });
 
-  return i18n.__('update-check-same-property', { key: error });
-}
+  return result;
+};
 
-export function convertToMultiObject<T>(object: unknown): FindOptionsWhere<T>[] {
-  const res = [];
-  Object.keys(object).forEach((key) => {
-    if ([null, undefined, ''].includes(object[key])) return;
-    res.push({ [key]: object[key] });
-  });
-  return res;
-}
+export const isObjectIdEqual = (o1: any, o2: any) => o1?.toString() === o2?.toString();
 
-export const ItemNotFoundMessage = (item: string) => i18n.__('item-not-found', i18n.__(item));
+export const dateDiff = (date1: Date, date2: Date) => date1.getTime() - date2.getTime();
+
+export const getAccountByRawData = (item) => item[2]?.split(' ')[0];

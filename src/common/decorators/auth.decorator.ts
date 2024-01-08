@@ -1,8 +1,8 @@
-import { ROLE_PERMISSION } from '@models/user.model';
+import { Roles } from '@common/constants/global.const';
 import { applyDecorators, UseGuards } from '@nestjs/common';
 import { RolesGuard } from 'src/guards/roles.guard';
-import { Roles } from './roles.decorator';
+import { RolesPermission } from './roles.decorator';
 
-export function Auth(...roles: ROLE_PERMISSION[]) {
-  return applyDecorators(Roles(...roles), UseGuards(RolesGuard));
+export function Auth(roles: Roles[] | Roles) {
+  return applyDecorators(RolesPermission(roles), UseGuards(RolesGuard));
 }

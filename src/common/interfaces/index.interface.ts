@@ -1,22 +1,15 @@
-import { EntityManager, EntityTarget, Repository } from 'typeorm';
-import { Pagination } from './filter.interface';
+// import { EntityManager, EntityTarget, Repository } from 'typeorm';
+import { User } from '@models/user.model';
 import { StreamableFile } from '@nestjs/common';
-import { User } from '#entities/user.entity';
 import type { Response } from 'express';
 
-export interface FindAndCountQuery {
-  pagination: Pagination;
-  relations?: string[];
-  searchBy?: string[];
-  entityManager?: EntityManager;
-  entity?: EntityTarget<any>;
-}
-
-export interface ValidateUniqueEntity<T, DTO> {
-  next: DTO;
-  repository: Repository<T>;
-  id: number;
-}
+// export interface FindAndCountQuery {
+//   pagination: Pagination;
+//   relations?: string[];
+//   searchBy?: string[];
+//   entityManager?: EntityManager;
+//   entity?: EntityTarget<any>;
+// }
 
 export interface FileExport {
   file: StreamableFile;

@@ -1,19 +1,14 @@
-import {
-  LIMIT_RECORD_DEFAULT,
-  PAGE_DEFAULT,
-} from '@common/constants/global.const';
-import { PaginateResponse } from '@common/interfaces/response.interface';
 import { Injectable } from '@nestjs/common';
 import {
-  Model,
-  Document,
   ClientSession,
+  Document,
   FilterQuery,
-  Query,
+  Model,
   PopulateOptions,
-  Types,
   ProjectionType,
+  Query,
   QueryOptions,
+  Types,
 } from 'mongoose';
 
 export type IPopulate = PopulateOptions | string;
@@ -60,10 +55,7 @@ export class BaseRepository<T extends Document> {
     );
   }
 
-  async findAllDeleted(
-    filterQuery?: FilterQuery<T>,
-    populate?: IPopulate[],
-  ): Promise<T[]> {
+  async findAllDeleted(filterQuery?: FilterQuery<T>, populate?: IPopulate[]): Promise<T[]> {
     return await this._addPopulate(
       this.model.find({
         ...filterQuery,
@@ -73,10 +65,7 @@ export class BaseRepository<T extends Document> {
     );
   }
 
-  async findOne(
-    filterQuery: FilterQuery<T>,
-    populate?: IPopulate[],
-  ): Promise<T> {
+  async findOne(filterQuery: FilterQuery<T>, populate?: IPopulate[]): Promise<T> {
     const query = { ...filterQuery, deletedAt: null };
     return await this._addPopulate(this.model.findOne(query), populate);
   }
@@ -94,45 +83,42 @@ export class BaseRepository<T extends Document> {
   }
 
   async findByIdIncludeDelete(id: string, populate?: IPopulate[]): Promise<T> {
-    return await this._addPopulate(
-      this.model.findOne({ _id: id as any }),
-      populate,
-    );
+    return await this._addPopulate(this.model.findOne({ _id: id as any }), populate);
   }
 
-  async paginate(
-    limit = LIMIT_RECORD_DEFAULT,
-    page = PAGE_DEFAULT,
-    filterQuery: FilterQuery<T> = {},
-    population?: IPopulate[],
-    sort = '-createdAt',
-  ): Promise<PaginateResponse<T[]>> {
-    const query = {
-      ...filterQuery,
-      deletedAt: null,
-    };
-    const pageNumber = +page;
-    const offset = pageNumber - 1;
-    const limitNumber = +limit;
-    const paginationDataQuery = this._addPopulate(
-      this.model
-        .find(query)
-        .skip(offset * limitNumber)
-        .limit(limitNumber)
-        .sort(sort),
-      population,
-    );
-    const [records, totalRecord] = await Promise.all([
-      paginationDataQuery,
-      this.model.count(query),
-    ]);
-    return {
-      records,
-      totalPage: Math.ceil(totalRecord / limitNumber),
-      currentPage: pageNumber,
-      total: totalRecord,
-    };
-  }
+  // async paginate(
+  //   limit = LIMIT_RECORD_DEFAULT,
+  //   page = PAGE_DEFAULT,
+  //   filterQuery: FilterQuery<T> = {},
+  //   population?: IPopulate[],
+  //   sort = '-createdAt',
+  // ): Promise<PaginateResponse<T[]>> {
+  //   const query = {
+  //     ...filterQuery,
+  //     deletedAt: null,
+  //   };
+  //   const pageNumber = +page;
+  //   const offset = pageNumber - 1;
+  //   const limitNumber = +limit;
+  //   const paginationDataQuery = this._addPopulate(
+  //     this.model
+  //       .find(query)
+  //       .skip(offset * limitNumber)
+  //       .limit(limitNumber)
+  //       .sort(sort),
+  //     population,
+  //   );
+  //   const [records, totalRecord] = await Promise.all([
+  //     paginationDataQuery,
+  //     this.model.count(query),
+  //   ]);
+  //   return {
+  //     records,
+  //     totalPage: Math.ceil(totalRecord / limitNumber),
+  //     currentPage: pageNumber,
+  //     total: totalRecord,
+  //   };
+  // }
 
   async create(payload: any, session?: ClientSession): Promise<T> {
     const _createModel = async (data: any, session: ClientSession) => {
@@ -196,16 +182,8 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-  async update(
-    id: string | Types.ObjectId,
-    payload: any,
-    session?: ClientSession,
-  ): Promise<T> {
-    const _updateModel = async (
-      id: string | Types.ObjectId,
-      data: any,
-      session: ClientSession,
-    ) => {
+  async update(id: string | Types.ObjectId, payload: any, session?: ClientSession): Promise<T> {
+    const _updateModel = async (id: string | Types.ObjectId, data: any, session: ClientSession) => {
       return await this.model.findByIdAndUpdate(id, data, {
         new: true,
         session,
@@ -234,16 +212,8 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-  async insertOrUpdate(
-    filterQuery: FilterQuery<T>,
-    payload: any,
-    session?: ClientSession,
-  ): Promise<any> {
-    const _insertOrUpdateModel = async (
-      filterQuery: FilterQuery<T>,
-      data: any,
-      session: ClientSession,
-    ) => {
+  async insertOrUpdate(filterQuery: FilterQuery<T>, payload: any, session?: ClientSession): Promise<any> {
+    const _insertOrUpdateModel = async (filterQuery: FilterQuery<T>, data: any, session: ClientSession) => {
       return await this.model.findOneAndUpdate(
         filterQuery,
         { $set: data },
@@ -262,11 +232,7 @@ export class BaseRepository<T extends Document> {
     const sessionLocal = await this.model.db.startSession();
     try {
       sessionLocal.startTransaction();
-      const data = await _insertOrUpdateModel(
-        filterQuery,
-        payload,
-        sessionLocal,
-      );
+      const data = await _insertOrUpdateModel(filterQuery, payload, sessionLocal);
       await sessionLocal.commitTransaction();
       return data;
     } catch (error) {
@@ -277,16 +243,8 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-  async updateByFilter(
-    filterQuery: FilterQuery<T>,
-    payload: any,
-    session?: ClientSession,
-  ): Promise<any> {
-    const _updateMany = async (
-      filterQuery: FilterQuery<T>,
-      data: any,
-      session: ClientSession,
-    ) => {
+  async updateByFilter(filterQuery: FilterQuery<T>, payload: any, session?: ClientSession): Promise<any> {
+    const _updateMany = async (filterQuery: FilterQuery<T>, data: any, session: ClientSession) => {
       return await this.model.updateMany(filterQuery, data, {
         new: true,
         session,
@@ -381,14 +339,8 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-  async removeByFilter(
-    filterQuery: FilterQuery<T>,
-    session?: ClientSession,
-  ): Promise<any> {
-    const _deleteMany = async (
-      filterQuery: FilterQuery<T>,
-      session: ClientSession,
-    ) => {
+  async removeByFilter(filterQuery: FilterQuery<T>, session?: ClientSession): Promise<any> {
+    const _deleteMany = async (filterQuery: FilterQuery<T>, session: ClientSession) => {
       return await this.model.deleteMany(filterQuery, { session });
     };
     if (session) {
@@ -412,11 +364,7 @@ export class BaseRepository<T extends Document> {
     }
   }
 
-  private _addPopulate(
-    query: Query<any, any>,
-    populate?: IPopulate[],
-    includingSoftDelete = false,
-  ) {
+  private _addPopulate(query: Query<any, any>, populate?: IPopulate[], includingSoftDelete = false) {
     if (populate && populate.length) {
       populate.forEach((item) => {
         const itemTransform = includingSoftDelete
@@ -438,13 +386,9 @@ export class BaseRepository<T extends Document> {
       tmp.match = { deletedAt: null, ...tmp.match };
       if (item.populate) {
         if (Array.isArray(item.populate)) {
-          tmp.populate = item.populate.map((val) =>
-            this._addPopulateSoftDelete(val as IPopulate),
-          );
+          tmp.populate = item.populate.map((val) => this._addPopulateSoftDelete(val as IPopulate));
         } else {
-          tmp.populate = this._addPopulateSoftDelete(
-            item.populate as IPopulate,
-          );
+          tmp.populate = this._addPopulateSoftDelete(item.populate as IPopulate);
         }
       }
     }
@@ -460,13 +404,9 @@ export class BaseRepository<T extends Document> {
       tmp.match = { ...tmp.match };
       if (item.populate) {
         if (Array.isArray(item.populate)) {
-          tmp.populate = item.populate.map((val) =>
-            this._addPopulateIncludeSoftDelete(val as IPopulate),
-          );
+          tmp.populate = item.populate.map((val) => this._addPopulateIncludeSoftDelete(val as IPopulate));
         } else {
-          tmp.populate = this._addPopulateIncludeSoftDelete(
-            item.populate as IPopulate,
-          );
+          tmp.populate = this._addPopulateIncludeSoftDelete(item.populate as IPopulate);
         }
       }
     }

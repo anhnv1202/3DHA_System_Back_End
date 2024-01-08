@@ -1,6 +1,5 @@
-import { ROLE_PERMISSION } from '@models/user.model';
+import { Roles } from '@common/constants/global.const';
 import { SetMetadata } from '@nestjs/common';
 
-export const ROLES_KEY = 'roles';
-export const Roles = (...roles: ROLE_PERMISSION[]) =>
-  SetMetadata(ROLES_KEY, roles);
+export const ROLES_KEY = 'role';
+export const RolesPermission = (role: Roles | Roles[]) => SetMetadata(ROLES_KEY, role);
