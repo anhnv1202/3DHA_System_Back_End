@@ -1,13 +1,7 @@
 import { ResponseType } from '@common/constants/global.const';
 import { BaseResponse } from '@common/interfaces/response.interface';
 import { applyDecorators, Type } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiExtraModels,
-  ApiOkResponse,
-  ApiResponseOptions,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiExtraModels, ApiOkResponse, ApiResponseOptions, getSchemaPath } from '@nestjs/swagger';
 
 export const ApiNormalResponse = <TModel extends Type<any>>({
   model,
@@ -16,9 +10,7 @@ export const ApiNormalResponse = <TModel extends Type<any>>({
   model: TModel;
   type?: ResponseType;
 }) => {
-  let apiResponseType: (
-    options?: ApiResponseOptions,
-  ) => MethodDecorator & ClassDecorator;
+  let apiResponseType: (options?: ApiResponseOptions) => MethodDecorator & ClassDecorator;
   switch (type) {
     case ResponseType.Created:
       apiResponseType = ApiCreatedResponse;

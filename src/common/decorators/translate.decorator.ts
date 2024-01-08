@@ -4,9 +4,7 @@ export interface Translator {
   (phrase: string): string;
 }
 
-export const Trans = createParamDecorator(
-  (data: unknown, ctx: ExecutionContext) => {
-    const request = ctx.switchToHttp().getRequest();
-    return request.__;
-  },
-);
+export const Trans = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+  const request = ctx.switchToHttp().getRequest();
+  return request.__;
+});

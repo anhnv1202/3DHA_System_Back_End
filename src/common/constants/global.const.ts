@@ -5,7 +5,6 @@ export enum Locales {
   KR = 'kr',
 }
 
-
 export const LIMIT_RECORD_DEFAULT = 8;
 export const PAGE_DEFAULT = 1;
 
@@ -72,6 +71,3 @@ export const QUERY_PARAM_PARSE = {
   false: false,
   true: true,
 };
-
-
-

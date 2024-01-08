@@ -66,7 +66,7 @@ class _LogService {
       format.metadata({
         fillExcept: ['timestamp', 'service', 'level', 'message'],
       }),
-      this.getLogFormat()
+      this.getLogFormat(),
     );
   }
 

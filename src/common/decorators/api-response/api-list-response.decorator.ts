@@ -1,20 +1,10 @@
 import { ResponseType } from '@common/constants/global.const';
 import { BaseResponse } from '@common/interfaces/response.interface';
 import { applyDecorators, Type } from '@nestjs/common';
-import {
-  ApiCreatedResponse,
-  ApiOkResponse,
-  ApiResponseOptions,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiResponseOptions, getSchemaPath } from '@nestjs/swagger';
 
-export const ApiListResponse = <TModel extends Type<any>>(
-  model: TModel,
-  type = ResponseType.Ok,
-) => {
-  const apiResponseType: (
-    options?: ApiResponseOptions,
-  ) => MethodDecorator & ClassDecorator =
+export const ApiListResponse = <TModel extends Type<any>>(model: TModel, type = ResponseType.Ok) => {
+  const apiResponseType: (options?: ApiResponseOptions) => MethodDecorator & ClassDecorator =
     type === ResponseType.Ok ? ApiOkResponse : ApiCreatedResponse;
   return applyDecorators(
     apiResponseType({

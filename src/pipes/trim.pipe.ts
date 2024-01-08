@@ -1,4 +1,4 @@
-import { Injectable, PipeTransform, ArgumentMetadata } from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { NOT_TRIM_KEY } from './const.pipe';
 
 @Injectable()
@@ -24,6 +24,7 @@ export class TrimPipe implements PipeTransform {
     return values;
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   transform(values: any, metadata: ArgumentMetadata) {
     if (this.isObj(values)) {
       return this.trim(values);

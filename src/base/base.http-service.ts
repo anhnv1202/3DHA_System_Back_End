@@ -9,34 +9,22 @@ class BaseHttpService<T> {
     this.baseURL = baseURL;
   }
 
-  public async post(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<BaseHttpResponse<T>> {
+  public async post(url: string, options: AxiosRequestConfig = {}): Promise<BaseHttpResponse<T>> {
     const data = await this.request(HttpMethod.POST, url, options);
     return data;
   }
 
-  public async get(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<BaseHttpResponse<T>> {
+  public async get(url: string, options: AxiosRequestConfig = {}): Promise<BaseHttpResponse<T>> {
     const data = await this.request(HttpMethod.GET, url, options);
     return data;
   }
 
-  public async put(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<BaseHttpResponse<T>> {
+  public async put(url: string, options: AxiosRequestConfig = {}): Promise<BaseHttpResponse<T>> {
     const data = await this.request(HttpMethod.PUT, url, options);
     return data;
   }
 
-  public async delete(
-    url: string,
-    options: AxiosRequestConfig = {},
-  ): Promise<BaseHttpResponse<T>> {
+  public async delete(url: string, options: AxiosRequestConfig = {}): Promise<BaseHttpResponse<T>> {
     const data = await this.request(HttpMethod.DELETE, url, options);
     return data;
   }
@@ -60,10 +48,7 @@ class BaseHttpService<T> {
     } catch (axiosError) {
       const error = axiosError as AxiosError;
       if (error.response) {
-        throw new HttpException(
-          error.response.data['message'],
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException(error.response.data['message'], HttpStatus.INTERNAL_SERVER_ERROR);
       } else {
         throw axiosError;
       }
