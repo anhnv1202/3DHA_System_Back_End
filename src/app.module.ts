@@ -9,6 +9,7 @@ import { join } from 'path';
 
 import { MongooseConfigService } from './config/mongo-config.service';
 import { ThrottlerConfigService } from './config/throttler-config.service';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -41,6 +42,7 @@ import { UserModule } from './modules/user/user.module';
       }),
     }),
     UserModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

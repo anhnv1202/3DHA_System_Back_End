@@ -16,7 +16,7 @@ import { TransformInterceptor } from './interceptors/transform.interceptor';
 import { setLocal } from './middlewares/locales.middleware';
 import { TrimPipe } from './pipes/trim.pipe';
 
-const PORT = process.env.APP_PORT || 3000;
+const PORT = process.env.APP_PORT || 3001;
 const BASE_PATH = '/api';
 
 async function bootstrap() {

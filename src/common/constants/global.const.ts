@@ -49,6 +49,8 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export const CLOUDINARY = 'Cloudinary';
+
 export enum RequestStatus {
   DRAFT = 1,
   REJECT_BY_OMC = 2,
@@ -59,6 +61,8 @@ export const REGEX = {
   USERNAME: /^[\d\w]+$/,
   PHONE_NUMBER: /^[0-9]{10}$/,
 };
+
+export const DEFAULT_AVATAR = 'https://res.cloudinary.com/dzq6nfkra/image/upload/v1704822124/avatar/defaut-avatar.jpg';
 
 export const MAIL_DELAY = 1000;
 

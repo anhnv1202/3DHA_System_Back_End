@@ -19,6 +19,18 @@ export function handleLogInfo(info: any) {
   }
 }
 
+export const getPublicIdFromUrl = (publicUrl: string): string | null => {
+  const parts = publicUrl.split('/');
+  const filename = parts[parts.length - 1];
+
+  const filenameParts = filename.split('.');
+  if (filenameParts.length === 2) {
+    return filenameParts[0];
+  }
+
+  return null;
+};
+
 export function convertQueryParam(query: any): { [key: string]: string } {
   const parseQueries = {};
 

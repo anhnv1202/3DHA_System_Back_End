@@ -1,4 +1,4 @@
-import { Roles } from '@common/constants/global.const';
+import { DEFAULT_AVATAR, Roles } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
@@ -12,19 +12,35 @@ export class User extends Document {
   name: string;
 
   @ApiProperty()
-  @Prop()
-  age: number;
+  @Prop({ required: true })
+  phoneNumber: number;
 
   @ApiProperty()
   @Prop({ required: true })
   email: string;
 
-  @Prop({ required: false, select: false })
+  @Prop({ required: false })
   password: string;
+
+  @ApiProperty()
+  @Prop({ default: DEFAULT_AVATAR })
+  avatar: string;
 
   @ApiProperty()
   @Prop({ required: false })
   role: Roles;
+
+  @ApiProperty()
+  @Prop({ default: true })
+  isActive: boolean;
+
+  @ApiProperty()
+  @Prop({ required: false })
+  bio: string;
+
+  @ApiProperty()
+  @Prop({ default: false })
+  status: boolean;
 
   isValidPassword: (password: string) => Promise<boolean>;
 }
