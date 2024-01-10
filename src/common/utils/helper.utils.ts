@@ -133,3 +133,5 @@ export const isObjectIdEqual = (o1: any, o2: any) => o1?.toString() === o2?.toSt
 export const dateDiff = (date1: Date, date2: Date) => date1.getTime() - date2.getTime();
 
 export const getAccountByRawData = (item) => item[2]?.split(' ')[0];
+
+export const ItemNotFoundMessage = (item: string) => i18n.__('item-not-found', i18n.__(item));

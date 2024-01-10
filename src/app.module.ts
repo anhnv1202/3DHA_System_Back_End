@@ -7,9 +7,13 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 
+import { MailModule } from '@modules/mail/mail.module';
+import { BullModule } from '@nestjs/bull';
 import { MongooseConfigService } from './config/mongo-config.service';
 import { ThrottlerConfigService } from './config/throttler-config.service';
+import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
+import { TokenModule } from './modules/token/token.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -41,8 +45,21 @@ import { UserModule } from './modules/user/user.module';
         global: true,
       }),
     }),
+    BullModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        redis: {
+          host: configService.get<string>('REDIS_HOST'),
+          port: +configService.get<number>('REDIS_PORT'),
+        },
+      }),
+      inject: [ConfigService],
+    }),
+    MailModule,
     UserModule,
     CloudinaryModule,
+    AuthModule,
+    TokenModule,
   ],
   controllers: [],
   providers: [],

@@ -1,25 +1,26 @@
-import { MailerService } from '@nestjs-modules/mailer';
+import { CONFIRM, MAIL_QUEUE } from '@common/constants/mail.const';
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
+import { Queue } from 'bull';
 import LogService from 'src/config/log.service';
 
 @Injectable()
 export class MailService {
-  constructor(private mailer: MailerService) {}
+  constructor(
+    @InjectQueue(MAIL_QUEUE) private readonly _mailQueue: Queue,
+    private readonly _configService: ConfigService,
+  ) {}
 
-  async sendUserConfirmation({ username, email, url }) {
+  public async sendConfirmationEmail(email: string, username: string, url: string): Promise<void> {
     try {
-      await this.mailer.sendMail({
-        to: email,
-        from: '"Support Team" <support@example.com>',
-        subject: 'Welcome to Nice App! Confirm your Email',
-        template: './mail.template.hbs',
-        context: {
-          username: username || email,
-          url,
-        },
+      await this._mailQueue.add(CONFIRM, {
+        email,
+        username,
+        url: url,
       });
-    } catch (e) {
-      LogService.logErrorFile(e);
+    } catch (error) {
+      LogService.logErrorFile(error);
       throw new InternalServerErrorException();
     }
   }

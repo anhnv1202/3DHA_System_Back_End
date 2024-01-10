@@ -49,6 +49,16 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export enum TokenType {
+  CONFIRM_REGISTRATION = 'confirm',
+}
+
+export enum ACCOUNT_STATUS_CODE {
+  TEMPREGISTER,
+  UNPUBLISHED,
+  PUBLISHED,
+};
+
 export const CLOUDINARY = 'Cloudinary';
 
 export enum RequestStatus {
