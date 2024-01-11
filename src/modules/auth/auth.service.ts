@@ -14,7 +14,6 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/mongoose';
-import * as bcrypt from 'bcrypt';
 import { Connection } from 'mongoose';
 import { ChangePasswordDTO, ForgotPasswordDTO, LoginDTO, RegisterDTO, SuccessResponseDTO } from 'src/dto/auth.dto';
 
@@ -65,8 +64,8 @@ export class AuthService {
 
   async login({ password, email }: LoginDTO) {
     const user = await this.userService.verifyUser(email);
-    const comparePassword = bcrypt.compareSync(password, user.password);
-    if (!user && !user.status && !comparePassword) {
+    const isMatch = await user.isValidPassword(password);
+    if (!user || !user.status || !isMatch) {
       throw new InternalServerErrorException('login-fail');
     }
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -175,21 +174,16 @@ export class AuthService {
       if (!crUser) {
         throw new BadRequestException(ItemNotFoundMessage('loginId'));
       }
-      const comparePassword = bcrypt.compareSync(oldPassword, crUser.password);
-      if (!comparePassword) {
+      const isMatch = await crUser.isValidPassword(oldPassword);
+      if (!isMatch) {
         throw new InternalServerErrorException('auth-password-not-correct');
       }
 
       if (newPassword !== confirmPassword) {
         throw new InternalServerErrorException('auth-password-not-same');
       }
-
-      const saltOrRounds = 10;
-      const salt = await bcrypt.genSalt(saltOrRounds);
-      const hash = await bcrypt.hash(newPassword, salt);
-      const lastPassword = hash;
       await session.commitTransaction();
-      return await this.userRepository.update(crUser.id, { password: lastPassword });
+      return await this.userRepository.update(crUser.id, { password: newPassword });
     } catch (e) {
       await session.abortTransaction();
       throw new InternalServerErrorException(e);

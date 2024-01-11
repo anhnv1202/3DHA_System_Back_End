@@ -45,6 +45,8 @@ export class User extends Document {
   @ApiProperty()
   @Prop({ default: false })
   status: boolean;
+
+  isValidPassword: (password: string) => Promise<boolean>;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -60,5 +62,26 @@ UserSchema.pre<User>('save', async function (next: NextFunction) {
     next(error);
   }
 });
+
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const update = this.getUpdate();
+  if ('password' in update && typeof update === 'object') {
+    const password = update.password;
+    if (password) {
+      const saltOrRounds = 10;
+      const hash = await bcrypt.hash(password, saltOrRounds);
+      update.password = hash;
+    }
+  }
+  next();
+});
+
+UserSchema.methods.isValidPassword = async function (password: string) {
+  try {
+    return await bcrypt.compare(password, this.password);
+  } catch (error) {
+    throw new Error(error);
+  }
+};
 
 UserSchema.statics = {};
