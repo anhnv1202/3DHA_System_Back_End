@@ -1,14 +1,14 @@
-import { TokenType } from '@common/constants/global.const';
+import { ACCOUNT_STATUS_CODE, TokenType } from '@common/constants/global.const';
 import { MailService } from '@modules/mail/mail.service';
 import { TokensRepository } from '@modules/token/token.repository';
 import { UsersRepository } from '@modules/user/user.repository';
 import { UserService } from '@modules/user/user.service';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
-import { RegisterDTO, RegisterResponseDTO } from 'src/dto/auth.dto';
+import { RegisterDTO, SuccessResponseDTO } from 'src/dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +23,7 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async register(body: RegisterDTO): Promise<RegisterResponseDTO> {
+  async register(body: RegisterDTO, request: any): Promise<SuccessResponseDTO> {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
@@ -31,7 +31,7 @@ export class AuthService {
       if (password !== rePassword) throw new InternalServerErrorException('auth-password-not-same');
       const user = await this.userRepository.create({ username, password, email, phone });
       const token = this.jwt.sign(
-        { username: body.username, email: body.email },
+        { id: user._id, role: user.role, status: user.status },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: 5 * 60 * 1000 },
       );
 
@@ -45,7 +45,7 @@ export class AuthService {
       this._mailService.sendConfirmationEmail(
         body.email,
         body.username,
-        `${this._configService.get('CLIENT_URL')}/change-password?token=${token}`,
+        `${request.get('origin')}/confirm?token=${token}`,
       );
       await session.commitTransaction();
       return { status: true };
@@ -56,6 +56,93 @@ export class AuthService {
       await session.endSession();
     }
   }
+
+  async confirm(token: string): Promise<SuccessResponseDTO> {
+    try {
+      const { id, status } = this.jwt.verify(token, { secret: process.env.JWT_SECRET_KEY });
+      if (status !== ACCOUNT_STATUS_CODE.TEMPREGISTER) throw new BadRequestException('access-denied');
+      const crUser = await this.userService.getOne(id);
+      if (crUser) throw new BadRequestException('user-not-existed');
+      return { status: true };
+    } catch (e) {
+      throw new InternalServerErrorException(e);
+    }
+  }
+
+  // async changePassword(body: ChangePasswordDTO, user: User): Promise<User> {
+  //   const { oldPassword, newPassword, confirmPassword, token } = body;
+  //   try {
+  //     if (token) {
+  //       // from forgot password
+  //       const { id, status } = this.jwt.verify(token, { secret: process.env.JWT_SECRET_KEY });
+  //       if (status === ACCOUNT_STATUS_CODE.UNPUBLISHED) throw new BadRequestException('access-denied');
+  //       const crUser = await this.userService.getOne(id);
+
+  //       if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-correct');
+
+  //       if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
+
+  //       return await this.userService.save({ ...crUser, password: newPassword });
+  //     }
+
+  //     const crUser = await this.userService.getOne(user.id);
+  //     if (!crUser) {
+  //       throw new BadRequestException(ItemNotFoundMessage('loginId'));
+  //     }
+
+  //     const currentStatus = crUser.status;
+
+  //     if (oldPassword !== crUser.password) {
+  //       throw new InternalServerErrorException('auth-password-not-correct');
+  //     }
+
+  //     if (newPassword !== confirmPassword) {
+  //       throw new InternalServerErrorException('auth-password-not-same');
+  //     }
+
+  //     const newStatus =
+  //       currentStatus === ACCOUNT_STATUS_CODE.UNPUBLISHED ? ACCOUNT_STATUS_CODE.TEMPREGISTER : currentStatus;
+
+  //     // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //     const { password, ...rest } = await this.userService.updateOne(
+  //       new User({ ...crUser, password: newPassword, status: newStatus, statusName: ACCOUNT_STATUS_NAME[newStatus] }),
+  //     );
+
+  //     return new User(rest);
+  //   } catch (e) {
+  //     throw new InternalServerErrorException(e);
+  //   }
+  // }
+
+  // async forgotPassword({ email, id }, request: any) {
+  //   const user = await this.userService.getOne(id);
+
+  //   if (!user || user.email !== email) {
+  //     throw new InternalServerErrorException('forgot-password');
+  //   }
+
+  //   const token = this.jwt.sign(
+  //     { id: user.id, role: user.role, email, status: user.status },
+  //     { secret: process.env.JWT_SECRET_KEY, expiresIn: 300 },
+  //   );
+  //   const url = ${request.get('origin')}/auth?token=${token};
+  //   const res = await new Promise(async (res, rej) => {
+  //     try {
+  //       await promiseHelper.delay(MAIL_DELAY);
+  //       await this.mail.sendUserConfirmation({ email, url });
+  //       res(HttpStatusCode.Ok);
+  //     } catch (e) {
+  //       LogService.logErrorFile(e);
+  //       rej(HttpStatusCode.InternalServerError);
+  //     }
+  //   });
+
+  //   if (res === HttpStatusCode.InternalServerError) {
+  //     throw new InternalServerErrorException(ItemNotFoundMessage('email'));
+  //   }
+
+  //   return res === HttpStatusCode.Ok;
+  // }
 
   //   async changePassword(body: ChangePasswordDTO, user: User): Promise<User> {
   //     const { oldPassword, newPassword, confirmPassword, token } = body;

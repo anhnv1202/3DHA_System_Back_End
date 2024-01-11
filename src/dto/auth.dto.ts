@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsString } from '@common/validator';
+import { IsEmail, IsNotEmpty, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
@@ -40,6 +40,35 @@ export class RegisterDTO {
   rePassword: string;
 }
 
-export class RegisterResponseDTO {
+export class SuccessResponseDTO {
   status: boolean;
+}
+
+export class ChangePasswordDTO {
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  oldPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  newPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  confirmPassword: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  token: string;
+}
+
+export class ConfirmDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  token: string;
 }

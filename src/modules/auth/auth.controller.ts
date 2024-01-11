@@ -1,9 +1,9 @@
 import { ResponseType } from '@common/constants/global.const';
 import { ApiNormalResponse } from '@common/decorators/api-response';
 import { Public } from '@common/decorators/common.decorator';
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, Request } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { RegisterDTO, RegisterResponseDTO } from 'src/dto/auth.dto';
+import { ConfirmDTO, RegisterDTO, SuccessResponseDTO } from 'src/dto/auth.dto';
 import { AuthService } from './auth.service';
 // import { LoginDto, LoginUserDto } from './dto/login.dto';
 
@@ -22,9 +22,22 @@ export class AuthController {
 
   @Post('/register')
   @Public()
-  @ApiBody({ type: RegisterDTO })
-  @ApiNormalResponse({ model: RegisterResponseDTO, type: ResponseType.Ok })
-  login(@Body() loginDto: RegisterDTO) {
-    return this.authService.register(loginDto);
+  @ApiNormalResponse({ model: SuccessResponseDTO, type: ResponseType.Ok })
+  register(@Body() loginDto: RegisterDTO, @Request() request: Request) {
+    return this.authService.register(loginDto, request);
   }
+
+  @Post('/confirm')
+  @Public()
+  @ApiBody({ type: ConfirmDTO })
+  @ApiNormalResponse({ model: SuccessResponseDTO, type: ResponseType.Ok })
+  confirm(@Body() confirmDto: ConfirmDTO) {
+    return this.authService.confirm(confirmDto.token);
+  }
+
+  @Post('/forgot')
+  @Public()
+  @ApiBody({ type: ConfirmDTO })
+  @ApiNormalResponse({ model: SuccessResponseDTO, type: ResponseType.Ok })
+  forgotPassword;
 }

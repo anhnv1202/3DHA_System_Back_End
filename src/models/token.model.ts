@@ -19,6 +19,10 @@ export class Token extends Document {
   createdBy: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
+  @Prop({ default: false })
+  status: boolean;
+
+  @ApiProperty()
   @Prop()
   expire: Date;
 }

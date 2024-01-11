@@ -27,6 +27,9 @@ export class UserService {
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
+  async getOne(_id: string): Promise<User> {
+    return await this.userRepository.findById(_id);
+  }
 
   //   async getAll(pagination: Pagination, user: User): Promise<PaginationResult<User>> {
   //     const { isManager } = pagination;
