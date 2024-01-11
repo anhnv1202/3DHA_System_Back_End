@@ -1,9 +1,7 @@
+import { getUserTokenByRequest } from '@guards/guard.helper';
 import { createParamDecorator, ExecutionContext } from '@nestjs/common';
-// import { decode } from 'jsonwebtoken';
-// import { instanceToPlain } from 'class-transformer';
-import { getUserByRequest } from '@guards/guard.helper';
 
-export const User = createParamDecorator(async (data: string, ctx: ExecutionContext) => {
+export const Profile = createParamDecorator(async (_: string, ctx: ExecutionContext) => {
   const request = ctx.switchToHttp().getRequest();
-  return getUserByRequest(data, request);
+  return getUserTokenByRequest(request);
 });

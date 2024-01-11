@@ -31,6 +31,10 @@ export class UserService {
     return await this.userRepository.findById(_id);
   }
 
+  async verifyUser(email: string): Promise<User | null> {
+    return await this.userRepository.findOne({ email });
+  }
+
   //   async getAll(pagination: Pagination, user: User): Promise<PaginationResult<User>> {
   //     const { isManager } = pagination;
   //     const isSuperAdmin = this.isSuperAdmin(user);

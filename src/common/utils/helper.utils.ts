@@ -1,5 +1,6 @@
 import { DEFAULT_PAGINATION, QUERY_PARAM_PARSE } from '@common/constants/global.const';
 import { Pagination } from '@common/interfaces/filter.interface';
+import * as i18n from 'i18n';
 import LogService from 'src/config/log.service';
 export function handleLogError(error: any) {
   if (process.env.NODE_ENV === 'production') {

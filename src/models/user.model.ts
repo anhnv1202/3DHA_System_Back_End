@@ -1,4 +1,4 @@
-import { ACCOUNT_STATUS_CODE, DEFAULT_AVATAR, Roles } from '@common/constants/global.const';
+import { DEFAULT_AVATAR, Roles } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
@@ -43,10 +43,8 @@ export class User extends Document {
   bio: string;
 
   @ApiProperty()
-  @Prop({ default: ACCOUNT_STATUS_CODE.TEMPREGISTER })
-  status: ACCOUNT_STATUS_CODE;
-
-  isValidPassword: (password: string) => Promise<boolean>;
+  @Prop({ default: false })
+  status: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
@@ -62,13 +60,5 @@ UserSchema.pre<User>('save', async function (next: NextFunction) {
     next(error);
   }
 });
-
-UserSchema.methods.isValidPassword = async function (password: string) {
-  try {
-    return await bcrypt.compare(password, this.password);
-  } catch (error) {
-    throw new Error(error);
-  }
-};
 
 UserSchema.statics = {};

@@ -1,4 +1,4 @@
-import { CONFIRM, MAIL_QUEUE } from '@common/constants/mail.const';
+import { CONFIRM_FORGOT_PASSWORD, CONFIRM_REGISTRATION, MAIL_QUEUE } from '@common/constants/mail.const';
 import { MailerService } from '@nestjs-modules/mailer';
 import { OnQueueActive, OnQueueCompleted, OnQueueFailed, Process, Processor } from '@nestjs/bull';
 import { Injectable, Logger } from '@nestjs/common';
@@ -12,7 +12,7 @@ export class MailProcessor {
 
   constructor(private readonly _mailerService: MailerService) {}
 
-  @Process(CONFIRM)
+  @Process(CONFIRM_REGISTRATION)
   public async confirmRegistration(job: Job<{ email: string; url: string; username: string }>) {
     LogService.logInfo(`Sending confirm registration email to '${job.data.email}'`);
     try {
@@ -21,6 +21,25 @@ export class MailProcessor {
         from: '"Support Team" <support@example.com>',
         subject: 'Welcome to Nice App! Confirm your Email',
         template: './registration.template.hbs',
+        context: {
+          username: job.data.username,
+          url: job.data.url,
+        },
+      });
+    } catch {
+      LogService.logErrorFile(`Failed to send confirmation email to '${job.data.email}'`);
+    }
+  }
+
+  @Process(CONFIRM_FORGOT_PASSWORD)
+  public async confirmForgotPassword(job: Job<{ email: string; url: string; username: string }>) {
+    LogService.logInfo(`Sending confirm registration email to '${job.data.email}'`);
+    try {
+      return await this._mailerService.sendMail({
+        to: job.data.email,
+        from: '"Support Team" <support@example.com>',
+        subject: 'Welcome to Nice App! Confirm your Email',
+        template: './forgot-password.template.',
         context: {
           username: job.data.username,
           url: job.data.url,

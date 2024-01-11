@@ -50,7 +50,8 @@ export enum Roles {
 }
 
 export enum TokenType {
-  CONFIRM_REGISTRATION = 'confirm',
+  CONFIRM_REGISTRATION = 'register',
+  CONFIRM_FORGOT_PASSWORD = 'password',
 }
 
 export enum ACCOUNT_STATUS_CODE {

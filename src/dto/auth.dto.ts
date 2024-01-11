@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from '@common/validator';
+import { User } from '@models/user.model';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class LoginDto {
@@ -41,9 +42,17 @@ export class RegisterDTO {
 }
 
 export class SuccessResponseDTO {
+  @ApiProperty()
   status: boolean;
 }
 
+export class LoginResponseDTO {
+  @ApiProperty()
+  user: User;
+
+  @ApiProperty()
+  accessToken: string;
+}
 export class ChangePasswordDTO {
   @ApiProperty()
   @IsString()
@@ -62,7 +71,7 @@ export class ChangePasswordDTO {
 
   @ApiProperty()
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   token: string;
 }
 
@@ -71,4 +80,23 @@ export class ConfirmDTO {
   @IsString()
   @IsNotEmpty()
   token: string;
+}
+
+export class LoginDTO {
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  password: string;
+}
+
+export class ForgotPasswordDTO {
+  @ApiProperty()
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
 }
