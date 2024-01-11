@@ -28,7 +28,7 @@ async function bootstrap() {
 
   i18n.configure({
     locales: APP_LOCALES,
-    defaultLocale: Locales.JA,
+    defaultLocale: Locales.EN,
     objectNotation: true,
     directory: path.join(__dirname, '/assets/lang'),
   });

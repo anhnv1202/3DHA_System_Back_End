@@ -21,7 +21,7 @@ export enum MinLengthId {
   COMPANY = 5,
 }
 
-export const APP_LOCALES = [Locales.JA];
+export const APP_LOCALES = [Locales.EN];
 
 export enum ResponseType {
   Ok,
@@ -38,7 +38,7 @@ export const ONE_DAY_TO_MS = 24 * 60 * 60 * 1000;
 export const SORT_DIRECTION = ['ASC', 'DESC'];
 
 export enum ErrorMessage {
-  UNIQUE = 'duplicate key value violates unique constraint',
+  UNIQUE = 'duplicate key error collection',
   QUERY_WRONG = 'Make sure your query is correct.',
   DATE_TIME_INVALID = 'date/time field value out of range',
   FAILING_ROW = 'Failing row contains',

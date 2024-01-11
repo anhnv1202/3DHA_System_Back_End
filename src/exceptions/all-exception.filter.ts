@@ -61,37 +61,5 @@ function getErrorMessage(error: string | string[], key: string): string {
     return i18n.__('query-invalid', sub);
   }
 
-  if (error === 'invalid-data-import' && key) {
-    const data = JSON.parse(key);
-    const stack = data.options ? data : JSON.parse(data.error);
-
-    let custom;
-    try {
-      const {
-        options: { driverError },
-      } = stack;
-
-      const detail = driverError?.detail as string;
-
-      const flat = detail
-        .split('(')
-        .map((i) => i.split(')'))
-        .flat();
-
-      let value = flat[3];
-      if (detail.startsWith(ErrorMessage.FAILING_ROW)) {
-        value = 'null';
-      }
-
-      custom = i18n.__('save-unique-message', {
-        col: i18n.__(`${driverError?.table || 'unknown'}-${driverError?.column || 'unknown'}`),
-        value,
-      });
-    } catch (e) {
-      custom = e;
-    }
-    return i18n.__(custom);
-  }
-
   return i18n.__(error);
 }
