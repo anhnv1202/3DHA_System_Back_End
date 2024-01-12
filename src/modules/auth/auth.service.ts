@@ -50,7 +50,7 @@ export class AuthService {
       this._mailService.sendConfirmationEmailRegister(
         body.email,
         body.username,
-        `${request.get('origin')}/confirm?token=${token}&type=register`,
+        `${request.get('origin')}/login?token=${token}`,
       );
       await session.commitTransaction();
       return { status: true };
@@ -134,7 +134,7 @@ export class AuthService {
       this._mailService.sendConfirmationEmailForgot(
         email,
         user.username,
-        `${request.get('origin')}/confirm?token=${token}&type=forgotPassword`,
+        `${request.get('origin')}/change-password?token=${token}`,
       );
       await session.commitTransaction();
       return { status: true };
