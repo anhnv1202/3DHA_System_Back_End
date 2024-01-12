@@ -34,9 +34,9 @@ export class AuthService {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const { password, rePassword, username, email, phone } = body;
+      const { password,firstName,lastName, rePassword, username, email, phone } = body;
       if (password !== rePassword) throw new InternalServerErrorException('auth-password-not-same');
-      const user = await this.userRepository.create({ username, password, email, phone });
+      const user = await this.userRepository.create({ username,firstName,lastName, password, email, phone });
       const token = this.jwt.sign(
         { id: user._id, role: user.role, status: user.status },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: 10 * 60 * 1000 },

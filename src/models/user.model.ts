@@ -12,6 +12,14 @@ export class User extends Document {
   username: string;
 
   @ApiProperty()
+  @Prop({ required: true })
+  lastName: string;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  firstName: string;
+
+  @ApiProperty()
   @Prop({ required: false })
   name: string;
 

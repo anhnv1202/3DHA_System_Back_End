@@ -21,6 +21,16 @@ export class RegisterDTO {
   username: string;
 
   @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  lastName: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  firstName: string;
+
+  @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
   email: string;
