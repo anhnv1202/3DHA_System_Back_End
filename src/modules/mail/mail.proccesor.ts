@@ -39,7 +39,7 @@ export class MailProcessor {
         to: job.data.email,
         from: '"Support Team" <support@example.com>',
         subject: 'Welcome to Nice App! Confirm your Email',
-        template: './forgot-password.template.',
+        template: './forgot-password.template.hbs',
         context: {
           username: job.data.username,
           url: job.data.url,
