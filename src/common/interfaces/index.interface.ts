@@ -2,14 +2,14 @@
 import { User } from '@models/user.model';
 import { StreamableFile } from '@nestjs/common';
 import type { Response } from 'express';
+import { IPopulate } from 'src/base/base.repository';
+import { Pagination } from './filter.interface';
 
-// export interface FindAndCountQuery {
-//   pagination: Pagination;
-//   relations?: string[];
-//   searchBy?: string[];
-//   entityManager?: EntityManager;
-//   entity?: EntityTarget<any>;
-// }
+export interface FindAndCountQuery {
+  pagination: Pagination;
+  populates?: IPopulate[];
+  searchBy?: string[];
+}
 
 export interface FileExport {
   file: StreamableFile;
@@ -22,7 +22,3 @@ export interface ExportUserInfoPDF<T> {
   user: User;
 }
 
-export interface BatchResult {
-  total: number;
-  errors: Array<{ name: string; error: string }>;
-}

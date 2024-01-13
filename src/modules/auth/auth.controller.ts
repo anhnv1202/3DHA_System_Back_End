@@ -2,8 +2,9 @@ import { ResponseType } from '@common/constants/global.const';
 import { ApiNormalResponse } from '@common/decorators/api-response';
 import { Public } from '@common/decorators/common.decorator';
 import { Profile } from '@common/decorators/user.decorator';
+import { ExcludePasswordInterceptor } from '@interceptors/exclude-password.interceptor';
 import { User } from '@models/user.model';
-import { Body, Controller, Post, Put, Request } from '@nestjs/common';
+import { Body, Controller, Post, Put, Request, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   ChangePasswordDTO,
@@ -55,6 +56,7 @@ export class AuthController {
   @Public()
   @ApiBody({ type: ChangePasswordDTO })
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
+  @UseInterceptors(ExcludePasswordInterceptor)
   changePassword(@Body() body: ChangePasswordDTO, @Profile() user: User) {
     return this.authService.changePassword(body, user);
   }

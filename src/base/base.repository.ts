@@ -1,3 +1,4 @@
+import { FindAndCountQuery } from '@common/interfaces/index.interface';
 import { Injectable } from '@nestjs/common';
 import {
   ClientSession,
@@ -86,39 +87,33 @@ export class BaseRepository<T extends Document> {
     return await this._addPopulate(this.model.findOne({ _id: id as any }), populate);
   }
 
-  // async paginate(
-  //   limit = LIMIT_RECORD_DEFAULT,
-  //   page = PAGE_DEFAULT,
-  //   filterQuery: FilterQuery<T> = {},
-  //   population?: IPopulate[],
-  //   sort = '-createdAt',
-  // ): Promise<PaginateResponse<T[]>> {
-  //   const query = {
-  //     ...filterQuery,
-  //     deletedAt: null,
-  //   };
-  //   const pageNumber = +page;
-  //   const offset = pageNumber - 1;
-  //   const limitNumber = +limit;
-  //   const paginationDataQuery = this._addPopulate(
-  //     this.model
-  //       .find(query)
-  //       .skip(offset * limitNumber)
-  //       .limit(limitNumber)
-  //       .sort(sort),
-  //     population,
-  //   );
-  //   const [records, totalRecord] = await Promise.all([
-  //     paginationDataQuery,
-  //     this.model.count(query),
-  //   ]);
-  //   return {
-  //     records,
-  //     totalPage: Math.ceil(totalRecord / limitNumber),
-  //     currentPage: pageNumber,
-  //     total: totalRecord,
-  //   };
-  // }
+  async paginate(params: FindAndCountQuery): Promise<[T[], number]> {
+    const { pagination, populates, searchBy = [] } = params;
+    const { size, page, sortBy = 'createdAt', sortType = 'desc', text, ...rest } = pagination;
+
+    const conditions: any = { ...rest };
+
+    if (text && searchBy.length > 0) {
+      conditions['$or'] = searchBy.map((key) =>
+        !isNaN(Number(text)) ? { [key]: Number(text) } : { [key]: { $regex: new RegExp(text.toString(), 'i') } },
+      );
+    }
+    Object.keys(rest).length > 0 &&
+      Object.keys(rest).forEach((key) => {
+        conditions[key] = Array.isArray(rest[key]) ? { $in: rest[key] } : rest[key];
+      });
+    const query = this._addPopulate(
+      this.model
+        .find(conditions)
+        .select('-password')
+        .skip((Number(page) - 1) * Number(size))
+        .limit(Number(size))
+        .sort({ [sortBy]: sortType === 'desc' ? -1 : 1 }),
+      populates,
+    );
+    const [data, total] = await Promise.all([query, this.model.countDocuments(conditions)]);
+    return [data, total];
+  }
 
   async create(payload: any, session?: ClientSession): Promise<T> {
     const _createModel = async (data: any, session: ClientSession) => {

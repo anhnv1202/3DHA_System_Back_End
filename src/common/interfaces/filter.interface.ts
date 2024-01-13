@@ -8,8 +8,8 @@ export interface PaginationResult<T> {
 export interface Pagination {
   page: number;
   size: number;
-  text: string;
+  text: string | number;
   sortBy: string;
-  sortType: 'ASC' | 'DESC';
+  sortType: 'asc' | 'desc';
   [key: string]: string | number | Roles[];
 }

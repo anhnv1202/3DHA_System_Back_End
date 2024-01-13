@@ -20,6 +20,8 @@ export class PaginateResponse<T> {
   @ApiProperty()
   total: number;
   @ApiProperty()
+  lastPage: number;
+  @ApiProperty()
   page: number;
   @ApiProperty()
   size: number;

@@ -15,7 +15,8 @@ export class PaginationInterceptor<T> implements NestInterceptor<T, PaginateResp
         const total = result?.total || 0;
         const page = Number(pagination.page);
         const size = !page ? total : Number(pagination.size);
-        return { records: result?.data || [], total, page, size };
+        const lastPage = total < size ? 1 : Math.ceil(total / size);
+        return { records: result?.data || [], total, lastPage, page, size };
       }),
     );
   }

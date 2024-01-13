@@ -12,11 +12,17 @@
 //   ACCOUNT_STATUS_NAME,
 // } from '#common/constants/global.const';
 // import { BatchResult } from '#common/interfaces/index.interface';
+import { CLOUDINARY_USER_AVATAR_IMG, DEFAULT_AVATAR, Roles, SEARCH_BY } from '@common/constants/global.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { ItemNotFoundMessage } from '@common/utils/helper.utils';
 import { User } from '@models/user.model';
-import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CloudinaryService } from '@modules/cloudinary/cloudinary.service';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { ChangeActiveDTO } from 'src/dto/common.dto';
+import { UpdateUserDTO } from 'src/dto/user.dto';
 import { UsersRepository } from './user.repository';
 
 @Injectable()
@@ -24,9 +30,24 @@ export class UserService {
   constructor(
     private userRepository: UsersRepository,
     private configService: ConfigService,
+    private cloudinaryService: CloudinaryService,
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
+
+  async getAll(pagination: Pagination): Promise<PaginationResult<User>> {
+    const [data, total] = await this.userRepository.paginate({
+      pagination,
+      searchBy: SEARCH_BY.USER,
+    });
+
+    return { data, total };
+  }
+
+  async role(role: Roles, id: string): Promise<User> {
+    return await this.userRepository.update(id, { role: role });
+  }
+
   async getOne(id: string): Promise<User> {
     return await this.userRepository.findById(id);
   }
@@ -47,6 +68,33 @@ export class UserService {
     return await this.userRepository.removeByFilter({
       status: false,
       updatedAt: { $lte: new Date().getDate() - 3 },
+    });
+  }
+
+  async active(body: ChangeActiveDTO): Promise<User | boolean> {
+    if (!body.listId.length) return true;
+    return this.userRepository.updateByFilter(
+      { _id: { $in: body.listId } },
+      { deletedAt: body.isActive ? null : new Date() },
+    );
+  }
+
+  async update(data: UpdateUserDTO, id: string): Promise<User | null> {
+    const existUser = await this.getOne(id);
+    if (!existUser) throw new BadRequestException(ItemNotFoundMessage('User'));
+    const { avatar, lastName, firstName } = data;
+    let image = existUser.avatar;
+    if (avatar && avatar !== existUser.avatar) {
+      if (DEFAULT_AVATAR !== existUser.avatar && existUser.avatar)
+        await this.cloudinaryService.deleteFile(existUser.avatar, CLOUDINARY_USER_AVATAR_IMG);
+
+      image = (await this.cloudinaryService.uploadImage(avatar, CLOUDINARY_USER_AVATAR_IMG)).imageUrl;
+    }
+
+    return await this.updateOneBy(id, {
+      ...data,
+      avatar: image,
+      ...(lastName && firstName && { name: `${lastName} ${firstName}`.trim() }),
     });
   }
 
@@ -102,25 +150,6 @@ export class UserService {
   //       throw new InternalServerErrorException(e);
   //     }
   //   }
-
-  //   async verifyUser(id: string, password: string): Promise<User | null> {
-  //     try {
-  //       return await this.usersRepository.findOne({
-  //         where: { id, password },
-  //         relations: { company: true, corporation: true },
-  //       });
-  //     } catch (e) {
-  //       throw new InternalServerErrorException(e);
-  //     }
-  //   }
-
-  async findByEmail(email: string): Promise<User | null> {
-    try {
-      return await this.userRepository.findOne({ email });
-    } catch (e) {
-      throw new InternalServerErrorException(e);
-    }
-  }
 
   //   async save(user: Partial<User>): Promise<User> {
   //     return await this.usersRepository.save(user);
@@ -179,16 +208,6 @@ export class UserService {
   //       throw new InternalServerErrorException(e);
   //     } finally {
   //       await connect.release();
-  //     }
-  //   }
-
-  //   async active(body: ChangeActiveCorporation): Promise<UpdateResult | boolean> {
-  //     if (!body.listId.length) return true;
-
-  //     try {
-  //       return this.usersRepository.update([...body.listId], { deactive: !body.isActive });
-  //     } catch (e) {
-  //       throw new InternalServerErrorException(e);
   //     }
   //   }
 

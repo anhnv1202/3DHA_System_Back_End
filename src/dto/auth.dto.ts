@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from '@common/validator';
+import { REGEX } from '@common/constants/global.const';
+import { IsEmail, IsNotEmpty, IsOptional, IsString, Matches } from '@common/validator';
 import { User } from '@models/user.model';
 import { ApiProperty } from '@nestjs/swagger';
 
@@ -18,6 +19,7 @@ export class RegisterDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.USERNAME)
   username: string;
 
   @ApiProperty()
@@ -38,16 +40,19 @@ export class RegisterDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.PHONE_NUMBER)
   phone: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.PASSWORD)
   password: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.PASSWORD)
   rePassword: string;
 }
 
@@ -72,11 +77,13 @@ export class ChangePasswordDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.PASSWORD)
   newPassword: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @Matches(REGEX.PASSWORD)
   confirmPassword: string;
 
   @ApiProperty()

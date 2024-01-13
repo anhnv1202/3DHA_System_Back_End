@@ -4,11 +4,13 @@ import {
   IsArray as _IsArray,
   IsBoolean as _IsBoolean,
   IsEmail as _IsEmail,
+  IsEnum as _IsEnum,
   IsIn as _IsIn,
   IsNotEmpty as _IsNotEmpty,
   IsNumber as _IsNumber,
   IsOptional as _IsOptional,
   IsString as _IsString,
+  Matches as _Matches,
 } from 'class-validator';
 import { VALIDATE_MESSAGE } from './message-validate';
 
@@ -33,6 +35,9 @@ export const IsOptional = (validationOptions?: ValidationOptions) =>
 export const IsIn = (values: readonly any[], validationOptions?: ValidationOptions) =>
   _IsIn(values, { ...validationOptions, message: VALIDATE_MESSAGE.FIELD_REQUIRE });
 
+export const Matches = (pattern: RegExp, validationOptions?: ValidationOptions) =>
+  _Matches(pattern, { ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
+
 export const IsBoolean = (validationOptions?: ValidationOptions) =>
   _IsBoolean({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
 
@@ -44,6 +49,9 @@ export const IsArray = (validationOptions?: ValidationOptions) =>
 
 export const IsString = (validationOptions?: ValidationOptions) =>
   _IsString({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
+
+export const IsEnum = (entity: object, validationOptions?: ValidationOptions) =>
+  _IsEnum(entity, { ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
 
 export const IsNumber = (options?: IsNumberOptions, validationOptions?: ValidationOptions) =>
   _IsNumber(options, { ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });

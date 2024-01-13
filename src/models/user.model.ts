@@ -39,12 +39,11 @@ export class User extends Document {
   avatar: string;
 
   @ApiProperty()
-  @Prop({ required: false })
+  @Prop({ required: false, default: Roles.STUDENT })
   role: Roles;
 
-  @ApiProperty()
-  @Prop({ default: true })
-  isActive: boolean;
+  @Prop({ type: Date, default: null })
+  deletedAt: Date | null;
 
   @ApiProperty()
   @Prop({ required: false })
@@ -70,6 +69,7 @@ UserSchema.pre<User>('save', async function (next: NextFunction) {
     next(error);
   }
 });
+
 
 UserSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();

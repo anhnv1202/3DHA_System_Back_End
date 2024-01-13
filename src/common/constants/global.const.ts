@@ -35,7 +35,7 @@ export enum Encoding {
 
 export const ONE_DAY_TO_MS = 24 * 60 * 60 * 1000;
 
-export const SORT_DIRECTION = ['ASC', 'DESC'];
+export const SORT_DIRECTION = ['asc', 'desc'];
 
 export enum ErrorMessage {
   UNIQUE = 'duplicate key error collection',
@@ -49,6 +49,9 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export const ROLE_NORMAL = [Roles.STUDENT, Roles.TEACHER];
+export const ROLE_ARRAY = [Roles.STUDENT, Roles.TEACHER, Roles.ADMIN];
+
 export const TEN_MINUTES = 10 * 60 * 1000;
 
 export enum TokenType {
@@ -60,7 +63,7 @@ export enum ACCOUNT_STATUS_CODE {
   TEMPREGISTER,
   UNPUBLISHED,
   PUBLISHED,
-};
+}
 
 export const CLOUDINARY = 'Cloudinary';
 
@@ -71,9 +74,13 @@ export enum RequestStatus {
   DOING = 4,
 }
 export const REGEX = {
-  USERNAME: /^[\d\w]+$/,
+  USERNAME: /^[\d\w]{6,40}$/,
   PHONE_NUMBER: /^[0-9]{10}$/,
+  PASSWORD: /^.{8,16}$/,
 };
+
+export const CLOUDINARY_PRODUCT_IMG = 'product-image';
+export const CLOUDINARY_USER_AVATAR_IMG = 'user-avatar-image';
 
 export const DEFAULT_AVATAR = 'https://res.cloudinary.com/dzq6nfkra/image/upload/v1704822124/avatar/defaut-avatar.jpg';
 
@@ -81,10 +88,14 @@ export const MAIL_DELAY = 1000;
 
 export const DEFAULT_PAGINATION = {
   size: 8,
-  page: 0,
+  page: 1,
 };
 
 export const QUERY_PARAM_PARSE = {
   false: false,
   true: true,
+};
+
+export const SEARCH_BY = {
+  USER: ['name', 'role'],
 };

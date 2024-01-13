@@ -25,9 +25,9 @@ export class AuthService {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const { password, rePassword } = body;
+      const { password, rePassword, firstName, lastName } = body;
       if (password !== rePassword) throw new InternalServerErrorException('auth-password-not-same');
-      const user = await this.userService.createOne(body);
+      const user = await this.userService.createOne({ ...body, name: `${lastName} ${firstName}`.trim() });
       const token = this.jwt.sign(
         { id: user._id, role: user.role, status: user.status },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: 1000 },
@@ -151,12 +151,9 @@ export class AuthService {
         if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-correct');
 
         if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { password, ...res } = (
-          await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true })
-        ).toObject();
+        const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true });
         await session.commitTransaction();
-        return res;
+        return userRes;
       }
 
       const crUser = await this.userService.getOne(user._id);
@@ -171,12 +168,9 @@ export class AuthService {
       if (newPassword !== confirmPassword) {
         throw new BadRequestException('auth-password-not-same');
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password, ...res } = (
-        await this.userService.updateOneBy(crUser.id, { password: newPassword })
-      ).toObject();
+      const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword });
       await session.commitTransaction();
-      return res;
+      return userRes;
     } catch (e) {
       await session.abortTransaction();
       throw new InternalServerErrorException(e);
