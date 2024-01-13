@@ -70,7 +70,6 @@ UserSchema.pre<User>('save', async function (next: NextFunction) {
   }
 });
 
-
 UserSchema.pre('findOneAndUpdate', async function (next) {
   const update = this.getUpdate();
   if ('password' in update && typeof update === 'object') {
