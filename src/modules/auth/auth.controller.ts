@@ -39,8 +39,8 @@ export class AuthController {
   @Public()
   @ApiBody({ type: ConfirmDTO })
   @ApiNormalResponse({ model: SuccessResponseDTO, type: ResponseType.Ok })
-  confirm(@Body() confirmDto: ConfirmDTO, @Request() request: Request) {
-    return this.authService.confirm(confirmDto.token, request);
+  confirm(@Body() confirmDto: ConfirmDTO) {
+    return this.authService.confirm(confirmDto.token);
   }
 
   @Post('/forgot')
@@ -55,7 +55,7 @@ export class AuthController {
   @Public()
   @ApiBody({ type: ChangePasswordDTO })
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
-  changePassword(@Body() body: ChangePasswordDTO, @Profile() user: User, @Request() request: Request) {
-    return this.authService.changePassword(body, user, request);
+  changePassword(@Body() body: ChangePasswordDTO, @Profile() user: User) {
+    return this.authService.changePassword(body, user);
   }
 }

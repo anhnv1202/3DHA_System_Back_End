@@ -49,6 +49,8 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export const TEN_MINUTES = 10 * 60 * 1000;
+
 export enum TokenType {
   CONFIRM_REGISTRATION = 'register',
   CONFIRM_FORGOT_PASSWORD = 'password',

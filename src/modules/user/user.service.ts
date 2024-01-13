@@ -27,12 +27,27 @@ export class UserService {
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
-  async getOne(_id: string): Promise<User> {
-    return await this.userRepository.findById(_id);
+  async getOne(id: string): Promise<User> {
+    return await this.userRepository.findById(id);
   }
 
-  async verifyUser(email: string): Promise<User | null> {
-    return await this.userRepository.findOne({ email });
+  async getOneBy(data: Partial<User>): Promise<User | null> {
+    return await this.userRepository.findOne({ data });
+  }
+
+  async createOne(data: Partial<User>): Promise<User | null> {
+    return await this.userRepository.create({ ...data });
+  }
+
+  async updateOneBy(id: string, data: Partial<User>): Promise<User | null> {
+    return await this.userRepository.update(id, { ...data });
+  }
+
+  async deleteUserNotConfirm(): Promise<void> {
+    return await this.userRepository.removeByFilter({
+      status: false,
+      updatedAt: { $lte: new Date().getDate() - 3 },
+    });
   }
 
   //   async getAll(pagination: Pagination, user: User): Promise<PaginationResult<User>> {

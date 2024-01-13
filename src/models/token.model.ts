@@ -10,7 +10,7 @@ export class Token extends Document {
 
   @ApiProperty()
   @Prop()
-  expire: Date;
+  expiresAt: Date;
 }
 
 export const TokenSchema = SchemaFactory.createForClass(Token);

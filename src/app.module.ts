@@ -7,6 +7,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 
+import { CronJobModule } from '@modules/cron-job/cron-job.module';
 import { MailModule } from '@modules/mail/mail.module';
 import { BullModule } from '@nestjs/bull';
 import { MongooseConfigService } from './config/mongo-config.service';
@@ -60,6 +61,7 @@ import { UserModule } from './modules/user/user.module';
     CloudinaryModule,
     AuthModule,
     TokenModule,
+    CronJobModule,
   ],
   controllers: [],
   providers: [],
