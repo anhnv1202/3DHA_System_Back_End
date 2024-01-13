@@ -149,8 +149,9 @@ export class AuthService {
         const crUser = await this.userService.getOne(id);
 
         if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-correct');
-
-        if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
+        const isMatch = await crUser.isValidPassword(newPassword);
+        if (isMatch) throw new BadRequestException('validation-old-password-equal');
+        await this.tokenService.removeById(tokenExisted._id);
         const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true });
         await session.commitTransaction();
         return userRes;
