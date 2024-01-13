@@ -148,10 +148,17 @@ export class AuthService {
         const { id } = this.jwt.verify(token, { secret: process.env.JWT_SECRET_KEY });
         const crUser = await this.userService.getOne(id);
 
+<<<<<<< HEAD
         if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-same');
 
         if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
 
+=======
+        if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-correct');
+        const isMatch = await crUser.isValidPassword(newPassword);
+        if (isMatch) throw new BadRequestException('validation-old-password-equal');
+        await this.tokenService.removeById(tokenExisted._id);
+>>>>>>> 7a42c207b338f7aa3b820af333da67a6e7ffa9eb
         const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true });
         await session.commitTransaction();
         return userRes;

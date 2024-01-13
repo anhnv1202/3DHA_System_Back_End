@@ -21,4 +21,3 @@ export interface ExportUserInfoPDF<T> {
   res: Response;
   user: User;
 }
-

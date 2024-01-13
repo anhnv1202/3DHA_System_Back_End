@@ -22,7 +22,7 @@ export class MajorController {
   @ApiBody({ type: MajorDTO })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
   createMajor(@Body() body: MajorDTO) {
-    return this.majorService.createOne(body);
+    return this.majorService.create(body);
   }
 
   @Get('get-all')
@@ -33,7 +33,14 @@ export class MajorController {
     return this.majorService.getAll(pagination);
   }
 
-  //phai nhap ca title va description
+  @Get('get/:id')
+  @Public()
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
+  getOneMajor(@Param() body: { id: string }): Promise<Major> {
+    return this.majorService.getOne(body.id);
+  }
+
   @Put('update/:id')
   @ApiBearerAuth()
   @Auth([Roles.ADMIN])
@@ -41,7 +48,7 @@ export class MajorController {
   @ApiBody({ type: UpdateMajorDTO })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
   updateMajor(@Body() body: UpdateMajorDTO, @Param() params: { id: string }) {
-    return this.majorService.updateOneBy(params.id,body );
+    return this.majorService.update(params.id,body );
   }
 
   @Delete('delete/:id')
@@ -50,15 +57,9 @@ export class MajorController {
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
   deleteMajor( @Param() params: { id: string }) {
-    return this.majorService.deleteOneBy(params.id);
+    return this.majorService.delete(params.id);
   }
 
-  @Get('get/:id')
-  @Public()
-  @ApiParam({ name: 'id', type: String, required: true })
-  @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
-  getOneMajor(@Param() body: { id: string }): Promise<Major> {
-    return this.majorService.getOne(body.id);
-  }
+ 
 
 }

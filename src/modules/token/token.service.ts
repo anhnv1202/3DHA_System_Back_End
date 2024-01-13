@@ -1,5 +1,5 @@
-import { Token } from '@models/Token.model';
 import { Injectable } from '@nestjs/common';
+import { Token } from '../../models/token.model';
 import { TokensRepository } from './token.repository';
 
 @Injectable()

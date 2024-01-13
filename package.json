@@ -137,7 +137,9 @@
       "^@models(.*)$": "<rootDir>/src/models$1",
       "^@guards(.*)$": "<rootDir>/src/guards$1",
       "^@modules(.*)$": "<rootDir>/src/modules$1",
-      "^@interfaces(.*)$": "<rootDir>/src/interfaces$1"
+      "^@interfaces(.*)$": "<rootDir>/src/interfaces$1",
+      "^@interceptors(.*)$": "<rootDir>/src/interceptors$1",
+      "^@service(.*)$": "<rootDir>/src/service$1"
     }
   }
 }
