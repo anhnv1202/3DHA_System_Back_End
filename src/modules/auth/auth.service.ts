@@ -108,7 +108,7 @@ export class AuthService {
       const user = await this.userService.getOneBy({ email });
 
       if (user?.email !== email) {
-        throw new InternalServerErrorException('forgot-password');
+        throw new InternalServerErrorException('crUser');
       }
 
       const token = this.jwt.sign(
@@ -148,9 +148,10 @@ export class AuthService {
         const { id } = this.jwt.verify(token, { secret: process.env.JWT_SECRET_KEY });
         const crUser = await this.userService.getOne(id);
 
-        if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-correct');
+        if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-same');
 
         if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
+
         const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true });
         await session.commitTransaction();
         return userRes;
@@ -158,7 +159,7 @@ export class AuthService {
 
       const crUser = await this.userService.getOne(user._id);
       if (!crUser) {
-        throw new BadRequestException(ItemNotFoundMessage('loginId'));
+        throw new BadRequestException(ItemNotFoundMessage('crUser'));
       }
       const isMatch = await crUser.isValidPassword(oldPassword);
       if (!isMatch) {
