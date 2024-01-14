@@ -7,39 +7,46 @@ export class UpdateUserDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  lastName: string;
+  @IsOptional()
+  lastName?: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  firstName: string;
+  @IsOptional()
+  firstName?: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
+  @IsOptional()
   @Matches(REGEX.PHONE_NUMBER)
-  phone: string;
+  phone?: string;
 
   @ApiProperty()
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  @IsOptional()
+  email?: string;
 
   @ApiProperty()
   @IsEnum(Roles)
   @IsIn(ROLE_NORMAL)
   @IsNotEmpty()
-  role: number;
+  @IsOptional()
+  role?: number;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  avatar: string;
+  @IsOptional()
+  avatar?: string;
 
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
-  bio: string;
+  @IsOptional()
+  bio?: string;
 }
 
 export class UserQueryDTO extends PaginationDTO {

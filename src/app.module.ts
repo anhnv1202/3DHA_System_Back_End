@@ -16,6 +16,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { TokenModule } from './modules/token/token.module';
 import { UserModule } from './modules/user/user.module';
+import { MajorModule } from './modules/major/major.module';
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UserModule } from './modules/user/user.module';
     AuthModule,
     TokenModule,
     CronJobModule,
+    MajorModule,
   ],
   controllers: [],
   providers: [],

@@ -1,5 +1,12 @@
 {
   "item-not-found": "「%s」was not existed",
   "update-check-same-property": "「%s」was existed, please try again",
-  "query-invalid": "「%s」There is an error in your input. Please enter again."
+  "query-invalid": "「%s」There is an error in your input. Please enter again.",
+  "auth-password-not-same": "RePassword not same as your password",
+  "login-fail": "Wrong email or password",
+  "token-expired": "Token expired",
+  "access-denied": "Access denied, your account is not authorized",
+  "crUser": "Not found user",
+  "validation-old-password-equal": "new password is equal to old password",
+  "auth-password-not-correct": "password is incorrect"
 }
