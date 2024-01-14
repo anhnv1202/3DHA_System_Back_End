@@ -108,7 +108,7 @@ export class AuthService {
       const user = await this.userService.getOneBy({ email });
 
       if (user?.email !== email) {
-        throw new InternalServerErrorException('crUser');
+        throw new BadRequestException(ItemNotFoundMessage('crUser'));
       }
 
       const token = this.jwt.sign(
