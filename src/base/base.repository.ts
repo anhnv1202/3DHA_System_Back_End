@@ -90,7 +90,6 @@ export class BaseRepository<T extends Document> {
   async paginate(params: FindAndCountQuery): Promise<[T[], number]> {
     const { pagination, populates, searchBy = [] } = params;
     const { size, page, sortBy = 'createdAt', sortType = 'desc', text, ...rest } = pagination;
-
     const conditions: any = { ...rest };
 
     if (text && searchBy.length > 0) {
