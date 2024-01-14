@@ -1,4 +1,4 @@
-import {  IsNotEmpty, IsOptional, IsString } from '@common/validator';
+import { IsNotEmpty, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class MajorDTO {

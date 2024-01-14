@@ -11,6 +11,9 @@ export class Major extends Document {
   @ApiProperty()
   @Prop({ required: true })
   description: string;
+
+  @Prop({ type: Date, default: null })
+  deletedAt: Date | null;
 }
 
 export const MajorSchema = SchemaFactory.createForClass(Major);

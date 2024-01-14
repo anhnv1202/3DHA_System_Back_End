@@ -48,7 +48,7 @@ export class MajorController {
   @ApiBody({ type: UpdateMajorDTO })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
   updateMajor(@Body() body: UpdateMajorDTO, @Param() params: { id: string }) {
-    return this.majorService.update(params.id,body );
+    return this.majorService.update(params.id, body);
   }
 
   @Delete('delete/:id')
@@ -56,10 +56,7 @@ export class MajorController {
   @Auth([Roles.ADMIN])
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
-  deleteMajor( @Param() params: { id: string }) {
+  deleteMajor(@Param() params: { id: string }) {
     return this.majorService.delete(params.id);
   }
-
- 
-
 }

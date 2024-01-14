@@ -17,7 +17,6 @@ export class MajorService {
     const [data, total] = await this.majorRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.MAJOR,
-
     });
     return { data, total };
   }
@@ -33,5 +32,4 @@ export class MajorService {
   async delete(id: string): Promise<Major | null> {
     return await this.majorRepository.softDelete(id);
   }
-
 }
