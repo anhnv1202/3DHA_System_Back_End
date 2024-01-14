@@ -46,8 +46,8 @@ export class UserService {
     return await this.userRepository.findById(id);
   }
 
-  async getOneBy(data: Partial<User>): Promise<User | null> {
-    return await this.userRepository.findOne({ data });
+  async getOneBy(data: { [key: string]: any }): Promise<User | null> {
+    return await this.userRepository.findOne(data);
   }
 
   async createOne(data: Partial<User>): Promise<User | null> {
