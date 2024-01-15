@@ -5,7 +5,7 @@ import { Auth } from '@common/decorators/auth.decorator';
 import { ApiNormalResponse } from '@common/decorators/api-response';
 import { ResponseType, Roles } from '@common/constants/global.const';
 import { Major } from '@models/major.models';
-import { MajorDTO, UpdateMajorDTO } from 'src/dto/major.dto';
+import { MajorDTO, UpdateMajorDTO,MajorQueryDTO } from 'src/dto/major.dto';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { GetPagination } from '@common/interfaces/pagination-request';
 import { Public } from '@common/decorators/common.decorator';
@@ -27,7 +27,7 @@ export class MajorController {
 
   @Get('get-all')
   @Public()
-  @ApiQuery({ name: 'user', type: MajorDTO })
+  @ApiQuery({ name: 'major', type: MajorQueryDTO })
   @ApiPaginationResponse(Major)
   getAllMajor(@GetPagination() pagination: Pagination): Promise<PaginationResult<Major>> {
     return this.majorService.getAll(pagination);

@@ -52,16 +52,19 @@ export class UpdateUserDTO {
 export class UserQueryDTO extends PaginationDTO {
   @ApiProperty()
   @IsDate()
+  @IsNotEmpty()
   @IsOptional()
   deletedAt?: Date;
 
   @ApiProperty()
   @IsOptional()
+  @IsNotEmpty()
   @IsBoolean()
   status?: string;
 
   @ApiProperty()
   @IsEnum(Roles)
+  @IsNotEmpty()
   @IsOptional()
   role?: Roles;
 }

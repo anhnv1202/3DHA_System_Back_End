@@ -39,6 +39,31 @@ export class CourseDTO {
   // chapters: Types.ObjectId[];
 }
 
+export class CourseQueryDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  name?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  description?: string;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  major?: Types.ObjectId;
+
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  @IsOptional()
+  price?: number;
+}
+
 export class UpdateCourseDTO {
   @ApiProperty()
   @IsString()

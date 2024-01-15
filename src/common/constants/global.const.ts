@@ -101,5 +101,5 @@ export const QUERY_PARAM_PARSE = {
 export const SEARCH_BY = {
   USER: ['name', 'role'],
   MAJOR: ['title'],
-  COURSE: ['name', 'major', 'price', 'author', 'sold', 'totalRatings', 'discount'],
+  COURSE: ['name', 'major', 'author'],
 };
