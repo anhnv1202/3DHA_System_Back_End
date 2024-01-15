@@ -24,6 +24,7 @@ export class CourseService {
       populates: [
         { path: 'major', select: 'title' },
         { path: 'author', select: 'email' },
+        { path: 'quizzs',populate:'course'},
       ],
     });
     return { data, total };
