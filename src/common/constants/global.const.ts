@@ -83,6 +83,8 @@ export const CLOUDINARY_PRODUCT_IMG = 'product-image';
 export const CLOUDINARY_USER_AVATAR_IMG = 'user-avatar-image';
 
 export const DEFAULT_AVATAR = 'https://res.cloudinary.com/dzq6nfkra/image/upload/v1704822124/avatar/defaut-avatar.jpg';
+export const DEFAULT_THUMB_COURSE =
+  'https://res.cloudinary.com/dzq6nfkra/image/upload/v1704822124/avatar/defaut-avatar.jpg';
 
 export const MAIL_DELAY = 1000;
 
@@ -99,4 +101,5 @@ export const QUERY_PARAM_PARSE = {
 export const SEARCH_BY = {
   USER: ['name', 'role'],
   MAJOR: ['title'],
+  COURSE: ['name', 'major', 'author'],
 };

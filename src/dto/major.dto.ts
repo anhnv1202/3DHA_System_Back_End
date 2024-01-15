@@ -13,6 +13,14 @@ export class MajorDTO {
   description: string;
 }
 
+export class MajorQueryDTO {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  title?: string;
+}
+
 export class UpdateMajorDTO {
   @ApiProperty()
   @IsString()
