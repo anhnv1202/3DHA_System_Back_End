@@ -11,13 +11,20 @@ export class CourseService {
   constructor(private courseRepository: CoursesRepository) {}
 
   async getOne(id: string): Promise<Course> {
-    return await this.courseRepository.findById(id);
+    return await this.courseRepository.findById(id, [
+      { path: 'major', select: 'title' },
+      { path: 'author', select: 'email' },
+    ]);
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<Course>> {
     const [data, total] = await this.courseRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.COURSE,
+      populates: [
+        { path: 'major', select: 'title' },
+        { path: 'author', select: 'email' },
+      ],
     });
     return { data, total };
   }
@@ -28,11 +35,11 @@ export class CourseService {
   }
 
   async update(user: User, id: string, data: UpdateCourseDTO): Promise<Course | null> {
-    const currentCourse = await this.courseRepository.findById(id);
-    if (currentCourse.author !== user._id) {
+    const currentCourse = await this.courseRepository.findById(id, [{ path: 'author', select: 'email' }]);
+    if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    return await this.courseRepository.update(id, { ...data });
+    return await this.courseRepository.update(id, data);
   }
 
   async delete(user: User, id: string): Promise<Course | null> {
