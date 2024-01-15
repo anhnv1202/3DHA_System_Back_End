@@ -21,7 +21,7 @@ export class MajorController {
   @Auth([Roles.ADMIN])
   @ApiBody({ type: MajorDTO })
   @ApiNormalResponse({ model: Major, type: ResponseType.Ok })
-  createMajor(@Body() body: MajorDTO) {
+  createMajor(@Body() body: MajorDTO): Promise<Major> {
     return this.majorService.create(body);
   }
 
