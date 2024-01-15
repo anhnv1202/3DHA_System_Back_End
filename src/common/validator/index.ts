@@ -57,5 +57,5 @@ export const IsEnum = (entity: object, validationOptions?: ValidationOptions) =>
 export const IsNumber = (options?: IsNumberOptions, validationOptions?: ValidationOptions) =>
   _IsNumber(options, { ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
 
-  export const IsObject = (validationOptions?: ValidationOptions) =>
+export const IsObject = (validationOptions?: ValidationOptions) =>
   _IsObject({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });

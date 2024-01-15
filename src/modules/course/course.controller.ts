@@ -24,7 +24,7 @@ export class CourseController {
   @ApiBody({ type: CourseDTO })
   @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
   createCourse(@Body() body: CourseDTO, @Profile() user: User): Promise<Course> {
-    return this.courseService.create(user,body);
+    return this.courseService.create(user, body);
   }
 
   @Get('get-all')

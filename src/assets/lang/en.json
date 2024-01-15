@@ -8,5 +8,6 @@
   "access-denied": "Access denied, your account is not authorized",
   "crUser": "Not found user",
   "validation-old-password-equal": "new password is equal to old password",
-  "auth-password-not-correct": "password is incorrect"
+  "auth-password-not-correct": "password is incorrect",
+  "permission-denied": "Permission denied"
 }

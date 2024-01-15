@@ -22,7 +22,7 @@ export class Course extends Document {
   price: number;
 
   @ApiProperty()
-  @Prop({ default:DEFAULT_THUMB_COURSE })
+  @Prop({ default: DEFAULT_THUMB_COURSE })
   thumbnail: string;
 
   @ApiProperty()

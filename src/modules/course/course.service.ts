@@ -22,23 +22,23 @@ export class CourseService {
     return { data, total };
   }
 
-  async create(user: User,data: CourseDTO): Promise<Course | null> {
-    const courseData = {...data, author:user._id}
+  async create(user: User, data: CourseDTO): Promise<Course | null> {
+    const courseData = { ...data, author: user._id };
     return await this.courseRepository.create({ ...courseData });
   }
 
   async update(user: User, id: string, data: UpdateCourseDTO): Promise<Course | null> {
-    const currentCourse = await this.courseRepository.findById(id)
-    if(currentCourse.author !== user._id) { 
-      throw new BadRequestException('permission denied');
+    const currentCourse = await this.courseRepository.findById(id);
+    if (currentCourse.author !== user._id) {
+      throw new BadRequestException('permission-denied');
     }
     return await this.courseRepository.update(id, { ...data });
   }
 
   async delete(user: User, id: string): Promise<Course | null> {
-    const currentCourse = await this.courseRepository.findById(id)
-    if(currentCourse.author !== user._id) { 
-      throw new BadRequestException('permission denied');
+    const currentCourse = await this.courseRepository.findById(id);
+    if (currentCourse.author !== user._id) {
+      throw new BadRequestException('permission-denied');
     }
     return await this.courseRepository.softDelete(id);
   }
