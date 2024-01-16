@@ -18,7 +18,7 @@ export class Course extends Document {
   description: string[];
 
   @ApiProperty()
-  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: Major.name })
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Major' })
   major: PopulatedDoc<Major, Types.ObjectId>;
 
   @ApiProperty()
@@ -30,15 +30,15 @@ export class Course extends Document {
   thumbnail: string;
 
   @ApiProperty()
-  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: User.name })
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User'})
   author: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: Quizz.name  })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Quizz'  })
   quizzs: PopulatedDoc<Quizz, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: Chapter.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Chapter' })
   chapters: PopulatedDoc<Chapter, Types.ObjectId>[];
 
   @ApiProperty()

@@ -4,6 +4,7 @@ import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
 import { Question } from './question.model';
 import { Course } from './course.models';
 
+
 @Schema({ timestamps: true })
 export class Quizz extends Document {
   @ApiProperty()
@@ -11,11 +12,11 @@ export class Quizz extends Document {
   name: string;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: Question.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Question' })
   questions: PopulatedDoc<Question, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: Question.name })
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Course' })
   course: PopulatedDoc<Course, Types.ObjectId>;
 
   @ApiProperty()
