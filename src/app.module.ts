@@ -20,6 +20,7 @@ import { MajorModule } from './modules/major/major.module';
 import { CourseModule } from './modules/course/course.module';
 import { QuestionModule } from './modules/question/question.module';
 import { QuizzModule } from './modules/quizz/quizz.module';
+import { TestModule } from './modules/test/test.module';
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { QuizzModule } from './modules/quizz/quizz.module';
     CourseModule,
     QuestionModule,
     QuizzModule,
+    TestModule,
   ],
   controllers: [],
   providers: [],

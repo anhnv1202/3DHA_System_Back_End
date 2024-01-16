@@ -10,7 +10,6 @@ import { QuizzDTO, QuizzQueryDTO, UpdateQuizzDTO } from 'src/dto/quizz.dto';
 import { Quizz } from '@models/quizz.model';
 import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
-import { Course } from '@models/course.models';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { GetPagination } from '@common/interfaces/pagination-request';
 
@@ -24,23 +23,23 @@ export class QuizzController {
     @Auth([Roles.TEACHER])
     @ApiBody({ type: QuizzDTO })
     @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
-    createCourse(@Body() body: QuizzDTO): Promise<Quizz> {
+    createQuizz(@Body() body: QuizzDTO): Promise<Quizz> {
       return this.quizzService.create(body);
     }
   
     @Get('get-all')
     @Public()
     @ApiQuery({ name: 'quizz', type: QuizzQueryDTO })
-    @ApiPaginationResponse(Course)
-    getAllCourse(@GetPagination() pagination: Pagination): Promise<PaginationResult<Quizz>> {
+    @ApiPaginationResponse(Quizz)
+    getAllQuizz(@GetPagination() pagination: Pagination): Promise<PaginationResult<Quizz>> {
       return this.quizzService.getAll(pagination);
     }
   
     @Get('get/:id')
     @Public()
     @ApiParam({ name: 'id', type: String, required: true })
-    @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
-    getOneCourse(@Param() body: { id: string }): Promise<Quizz> {
+    @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
+    getOneQuizz(@Param() body: { id: string }): Promise<Quizz> {
       return this.quizzService.getOne(body.id);
     }
   
@@ -49,8 +48,8 @@ export class QuizzController {
     @Auth([Roles.TEACHER])
     @ApiParam({ name: 'id', type: String, required: true })
     @ApiBody({ type: UpdateQuizzDTO })
-    @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
-    updateCourse(@Body() body: UpdateQuizzDTO, @Param() params: { id: string }, @Profile() user: User) {
+    @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
+    updateQuizz(@Body() body: UpdateQuizzDTO, @Param() params: { id: string }, @Profile() user: User) {
       return this.quizzService.update(user, params.id, body);
     }
   
@@ -58,8 +57,8 @@ export class QuizzController {
     @ApiBearerAuth()
     @Auth([Roles.TEACHER])
     @ApiParam({ name: 'id', type: String, required: true })
-    @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
-    deleteCourse(@Param() params: { id: string }, @Profile() user: User) {
+    @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
+    deleteQuizz(@Param() params: { id: string }, @Profile() user: User) {
       return this.quizzService.delete(user, params.id);
     }
   }
