@@ -22,7 +22,7 @@ export class QuizzService {
     const [data, total] = await this.quizzRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.COURSE,
-      populates: [{ path: 'course',populate:'author'}],
+      populates: [{ path: 'course',populate:{path:'author',select:'_id'}},  { path: 'questions'},],
     });
     return { data, total };
   }
@@ -34,13 +34,13 @@ export class QuizzService {
   }
 
   async update(user: User, id: string, data: UpdateQuizzDTO): Promise<Quizz | null> {
-      // const currentQuizz = await this.quizzRepository.findById(id,[{ path: 'course',populate:'author'}]);
-      const currentQuizz = await this.quizzRepository.findById(id);
-     console.log(currentQuizz)
-    //  console.log(currentQuizz.course.author._id !== user._id)
-      // if (currentQuizz.course.author._id !== user._id) {
-      //   throw new BadRequestException('permission-denied');
-      // }
+      const currentQuizz = (await this.quizzRepository.findById(id,[{ path: 'course',populate:'author'}])).toObject();
+      if (currentQuizz.course.author._id.toString() !== user._id) {
+        throw new BadRequestException('permission-denied');
+      }
+      const test = currentQuizz.questions
+      const test1 = test.includes(data.question)
+      
     return await this.quizzRepository.update(id, {
       ...data,
       ...(data.question && { $push: { questions: data.question } }),
@@ -48,10 +48,10 @@ export class QuizzService {
   }
 
   async delete(user: User, id: string): Promise<Quizz | null> {
-    //   const currentCourse = await this.quizzRepository.findById(id);
-    //   if (currentCourse.author !== user._id) {
-    //     throw new BadRequestException('permission-denied');
-    //   }
+    const currentQuizz = (await this.quizzRepository.findById(id,[{ path: 'course',populate:'author'}])).toObject();
+      if (currentQuizz.course.author._id.toString() !== user._id) {
+        throw new BadRequestException('permission-denied');
+      }
     return await this.quizzRepository.softDelete(id);
   }
 }
