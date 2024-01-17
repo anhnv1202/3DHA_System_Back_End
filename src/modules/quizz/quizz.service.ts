@@ -15,14 +15,14 @@ export class QuizzService {
   ) {}
 
   async getOne(id: string): Promise<Quizz> {
-    return await this.quizzRepository.findById(id, [{ path: 'course' }]);
+    return await this.quizzRepository.findById(id, ['questions']);
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<Quizz>> {
     const [data, total] = await this.quizzRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.COURSE,
-      populates: [{ path: 'course',populate:{path:'author',select:'_id'}},  { path: 'questions'},],
+      populates: [{ path: 'course', populate: { path: 'author', select: '_id' } }, { path: 'questions' }],
     });
     return { data, total };
   }
@@ -34,13 +34,13 @@ export class QuizzService {
   }
 
   async update(user: User, id: string, data: UpdateQuizzDTO): Promise<Quizz | null> {
-      const currentQuizz = (await this.quizzRepository.findById(id,[{ path: 'course',populate:'author'}])).toObject();
-      if (currentQuizz.course.author._id.toString() !== user._id) {
-        throw new BadRequestException('permission-denied');
-      }
-      const test = currentQuizz.questions
-      const test1 = test.includes(data.question)
-      
+    const currentQuizz = (await this.quizzRepository.findById(id, [{ path: 'course', populate: 'author' }])).toObject();
+    if (currentQuizz.course.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
+    const questions = currentQuizz.questions.toString();
+    const isQuestionExist = questions.includes(data.question);
+    if (isQuestionExist) throw new BadRequestException('exist');
     return await this.quizzRepository.update(id, {
       ...data,
       ...(data.question && { $push: { questions: data.question } }),
@@ -48,10 +48,10 @@ export class QuizzService {
   }
 
   async delete(user: User, id: string): Promise<Quizz | null> {
-    const currentQuizz = (await this.quizzRepository.findById(id,[{ path: 'course',populate:'author'}])).toObject();
-      if (currentQuizz.course.author._id.toString() !== user._id) {
-        throw new BadRequestException('permission-denied');
-      }
+    const currentQuizz = (await this.quizzRepository.findById(id, [{ path: 'course', populate: 'author' }])).toObject();
+    if (currentQuizz.course.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
     return await this.quizzRepository.softDelete(id);
   }
 }

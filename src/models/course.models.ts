@@ -6,6 +6,8 @@ import { Major } from './major.models';
 import { User } from './user.model';
 import { Quizz } from './quizz.model';
 import { Chapter } from './chapter.model';
+import { Discount } from './discount.model';
+import { Rating } from './rating.model';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
@@ -30,32 +32,32 @@ export class Course extends Document {
   thumbnail: string;
 
   @ApiProperty()
-  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User'})
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
   author: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Quizz'  })
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Quizz', required: false, default: [] })
   quizzs: PopulatedDoc<Quizz, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Chapter' })
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Chapter', default: [] })
   chapters: PopulatedDoc<Chapter, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop()
   sold: number;
 
-  // @ApiProperty()
-  // @Prop()
-  // ratings: Types.ObjectId;
+  @ApiProperty()
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Rating', default: [] })
+  ratings: PopulatedDoc<Rating, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop()
   totalRatings: number;
 
-  // @ApiProperty()
-  // @Prop({ type: Types.ObjectId })
-  // discount: Types.ObjectId;
+  @ApiProperty()
+  @Prop({ type: Types.ObjectId, ref: 'Discount' })
+  discount: PopulatedDoc<Discount, Types.ObjectId>;
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

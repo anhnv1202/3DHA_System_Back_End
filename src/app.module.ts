@@ -20,7 +20,8 @@ import { MajorModule } from './modules/major/major.module';
 import { CourseModule } from './modules/course/course.module';
 import { QuestionModule } from './modules/question/question.module';
 import { QuizzModule } from './modules/quizz/quizz.module';
-import { TestModule } from './modules/test/test.module';
+import { OutcomeModule } from './modules/outcome/outcome.module';
+import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
 
 @Module({
   imports: [
@@ -71,7 +72,8 @@ import { TestModule } from './modules/test/test.module';
     CourseModule,
     QuestionModule,
     QuizzModule,
-    TestModule,
+    OutcomeModule,
+    OutcomeListModule,
   ],
   controllers: [],
   providers: [],

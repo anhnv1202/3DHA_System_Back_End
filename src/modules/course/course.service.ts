@@ -24,7 +24,7 @@ export class CourseService {
       populates: [
         { path: 'major', select: 'title' },
         { path: 'author', select: 'email' },
-        { path: 'quizzs',populate:'course'},
+        { path: 'quizzs', populate: 'course' },
       ],
     });
     return { data, total };
@@ -36,16 +36,22 @@ export class CourseService {
   }
 
   async update(user: User, id: string, data: UpdateCourseDTO): Promise<Course | null> {
-    const currentCourse = await this.courseRepository.findById(id, [{ path: 'author', select: 'email' }]);
+    const currentCourse = (await this.courseRepository.findById(id, [{ path: 'author', select: 'email' }])).toObject();
     if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    return await this.courseRepository.update(id, data);
+    const quizzs = currentCourse.quizzs.toString();
+    const isQuestionExist = quizzs.includes(data.quizz);
+    if (isQuestionExist) throw new BadRequestException('exist');
+    return await this.courseRepository.update(id, {
+      ...data,
+      ...(data.quizz && { $push: { quizzs: data.quizz } }),
+    });
   }
 
   async delete(user: User, id: string): Promise<Course | null> {
     const currentCourse = await this.courseRepository.findById(id);
-    if (currentCourse.author !== user._id) {
+    if (currentCourse.author._id !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     return await this.courseRepository.softDelete(id);
