@@ -69,12 +69,10 @@ export class OutcomeService {
     const score = (correctAnswer / numberQuestion) * 10;
     const outcomeData = { numberQuestion, noAnswer, wrongAnswer, score };
     const outcome = await this.outcomeRepository.create(outcomeData);
-
     const currentOutcomeList = await this.outcomeListRepository.findOne({ user: user._id });
     const outcomeList = await this.outcomeListRepository.update(currentOutcomeList._id, {
       ...(outcome && { $push: { outcome: outcome } }),
     });
-
     await this.quizzRepository.update(quizzId, {
       ...(outcomeList && { $push: { outcomeList: outcomeList } }),
     });
