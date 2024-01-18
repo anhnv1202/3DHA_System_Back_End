@@ -111,4 +111,5 @@ export const SEARCH_BY = {
   COURSE: ['name', 'major', 'author'],
   QUESTION: ['detail'],
   QUIZZ: ['name'],
+  OUTCOME_LIST: ['user'],
 };

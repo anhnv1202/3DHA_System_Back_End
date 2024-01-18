@@ -72,7 +72,7 @@ export class OutcomeService {
 
     const currentOutcomeList = await this.outcomeListRepository.findOne({ user: user._id });
     const outcomeList = await this.outcomeListRepository.update(currentOutcomeList._id, {
-      ...(outcome && { $push: { outcomeList: outcome } }),
+      ...(outcome && { $push: { outcome: outcome } }),
     });
 
     await this.quizzRepository.update(quizzId, {
