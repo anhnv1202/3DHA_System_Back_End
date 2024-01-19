@@ -17,7 +17,7 @@ export class QuestionService {
     return await this.questionRepository.findById(id);
   }
 
-  async getAll( pagination: Pagination): Promise<PaginationResult<Question>> {
+  async getAll(pagination: Pagination): Promise<PaginationResult<Question>> {
     const [data, total] = await this.questionRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.QUESTION,

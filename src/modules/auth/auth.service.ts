@@ -104,7 +104,7 @@ export class AuthService {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const { email } = body
+      const { email } = body;
       const user = await this.userService.getOneBy({ email });
 
       if (user?.email !== email) {

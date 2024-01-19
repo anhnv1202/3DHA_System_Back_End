@@ -1,3 +1,3 @@
-export interface Question  {
-    [key:string]: string;
+export interface Question {
+  [key: string]: string;
 }

@@ -9,7 +9,7 @@ export class Discount extends Document {
   discount: number;
 
   @ApiProperty()
-  @Prop({ required: true})
+  @Prop({ required: true })
   expired: Date;
 
   @ApiProperty()

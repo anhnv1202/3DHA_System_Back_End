@@ -23,7 +23,7 @@ export class QuestionController {
   @ApiBody({ type: QuestionDTO })
   @ApiNormalResponse({ model: Question, type: ResponseType.Ok })
   createMajor(@Body() body: QuestionDTO, @Profile() user: User) {
-    return this.questionService.create(user,body);
+    return this.questionService.create(user, body);
   }
 
   @Get('get-all')
@@ -40,7 +40,7 @@ export class QuestionController {
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiNormalResponse({ model: Question, type: ResponseType.Ok })
   getOneMajor(@Param() body: { id: string }, @Profile() user: User): Promise<Question> {
-    return this.questionService.getOne(user,body.id);
+    return this.questionService.getOne(user, body.id);
   }
 
   @Put('update/:id')
@@ -50,7 +50,7 @@ export class QuestionController {
   @ApiBody({ type: UpdateQuestionDTO })
   @ApiNormalResponse({ model: Question, type: ResponseType.Ok })
   updateMajor(@Body() body: UpdateQuestionDTO, @Param() params: { id: string }, @Profile() user: User) {
-    return this.questionService.update(user,params.id, body);
+    return this.questionService.update(user, params.id, body);
   }
 
   @Delete('delete/:id')
@@ -59,6 +59,6 @@ export class QuestionController {
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiNormalResponse({ model: Question, type: ResponseType.Ok })
   deleteMajor(@Param() params: { id: string }, @Profile() user: User) {
-    return this.questionService.delete(user,params.id);
+    return this.questionService.delete(user, params.id);
   }
 }

@@ -7,10 +7,9 @@ import { OutcomeListsRepository } from './outcome-list.repository';
 import { QuizzModule } from '@modules/quizz/quizz.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: OutcomeList.name, schema: OutcomeListSchema }]),QuizzModule],
+  imports: [MongooseModule.forFeature([{ name: OutcomeList.name, schema: OutcomeListSchema }]), QuizzModule],
   controllers: [OutcomeListController],
-  providers: [OutcomeListsRepository,OutcomeListService],
+  providers: [OutcomeListsRepository, OutcomeListService],
   exports: [OutcomeListsRepository, OutcomeListService],
-  
 })
 export class OutcomeListModule {}

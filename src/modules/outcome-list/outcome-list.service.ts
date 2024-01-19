@@ -19,7 +19,7 @@ export class OutcomeListService {
   ) {}
 
   async getOne(id: string): Promise<OutcomeList> {
-    return await this.outcomeListsRepository.findById(id,outcomeListPopulate);
+    return await this.outcomeListsRepository.findById(id, outcomeListPopulate);
   }
 
   async getOneByCurrent(user: User, quizzId: string): Promise<OutcomeList> {

@@ -9,10 +9,15 @@ import { QuestionModule } from '@modules/question/question.module';
 import { OutcomeListModule } from '@modules/outcome-list/outcome-list.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Outcome.name, schema: OutcomeSchema }]),QuizzModule,QuestionModule,OutcomeModule,OutcomeListModule],
+  imports: [
+    MongooseModule.forFeature([{ name: Outcome.name, schema: OutcomeSchema }]),
+    QuizzModule,
+    QuestionModule,
+    OutcomeModule,
+    OutcomeListModule,
+  ],
   controllers: [OutcomeController],
-  providers: [OutcomesRepository,OutcomeService],
+  providers: [OutcomesRepository, OutcomeService],
   exports: [OutcomesRepository, OutcomeService],
-
 })
 export class OutcomeModule {}

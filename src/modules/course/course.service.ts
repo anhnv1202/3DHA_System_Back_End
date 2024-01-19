@@ -33,7 +33,7 @@ export class CourseService {
   }
 
   async update(user: User, id: string, data: UpdateCourseDTO): Promise<Course | null> {
-    const currentCourse = (await this.courseRepository.findById(id,coursePopulate )).toObject();
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
     if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }

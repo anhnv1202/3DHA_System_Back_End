@@ -13,21 +13,21 @@ import { OutcomeListDTO } from 'src/dto/outcomeList.dto';
 @Controller('outcome')
 @ApiTags('outcome')
 export class OutcomeController {
-    constructor(private outcomeService: OutcomeService) {} 
+  constructor(private outcomeService: OutcomeService) {}
 
-    @Post('create')
-    @ApiBearerAuth()
-    @ApiBody({ type: OutcomeDTO })
-    @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
-    createOutcome(@Body() body: OutcomeDTO, @Profile() user: User) {
-      return this.outcomeService.create(user,body);
-    }
+  @Post('create')
+  @ApiBearerAuth()
+  @ApiBody({ type: OutcomeDTO })
+  @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
+  createOutcome(@Body() body: OutcomeDTO, @Profile() user: User) {
+    return this.outcomeService.create(user, body);
+  }
 
-    @Post('calculate')
-    @ApiBearerAuth()
-    @ApiBody({type: OutcomeListDTO})
-    @ApiNormalResponse({ model: OutcomeList, type: ResponseType.Ok })
-    calculateOutcome(@Body() body: OutcomeListDTO, @Profile() user: User) {
-      return this.outcomeService.calculate(user,body);
-    }
+  @Post('calculate')
+  @ApiBearerAuth()
+  @ApiBody({ type: OutcomeListDTO })
+  @ApiNormalResponse({ model: OutcomeList, type: ResponseType.Ok })
+  calculateOutcome(@Body() body: OutcomeListDTO, @Profile() user: User) {
+    return this.outcomeService.calculate(user, body);
+  }
 }
