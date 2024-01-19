@@ -1,16 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { OutcomeListsRepository } from './outcome-list.repository';
 import { SEARCH_BY } from '@common/constants/global.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { OutcomeList } from '@models/outcomeList.model';
 import { User } from '@models/user.model';
 import { QuizzsRepository } from '@modules/quizz/quizz.repository';
+import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @Injectable()
 export class OutcomeListService {
   constructor(
     private outcomeListsRepository: OutcomeListsRepository,
     private quizzsRepository: QuizzsRepository,
+    @InjectConnection()
+    private readonly connection: Connection,
   ) {}
 
   async getOne(id: string): Promise<OutcomeList> {
@@ -18,10 +22,21 @@ export class OutcomeListService {
   }
 
   async getOneByCurrent(user: User, quizzId: string): Promise<OutcomeList> {
-    const quizz = (await this.quizzsRepository.findById(quizzId)).toObject();
-    const outcomeList = quizz.outcomeList;
-    const matchingOutcomeList = outcomeList.find((outcomeList) => outcomeList.user._id === user._id);
-    return await this.outcomeListsRepository.findById(matchingOutcomeList._id);
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      const quizz = (await this.quizzsRepository.findById(quizzId)).toObject();
+      if (!quizz) throw new BadRequestException('cannot find');
+      const matchingOutcomeList = quizz.outcomeList.find((outcomeList) => outcomeList.user._id === user._id);
+      const outcomeList = await this.outcomeListsRepository.findById(matchingOutcomeList._id);
+      if (!outcomeList) throw new BadRequestException('cannot find');
+      await session.commitTransaction();
+      return outcomeList;
+    } catch (e) {
+      await session.abortTransaction();
+    } finally {
+      await session.endSession();
+    }
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<OutcomeList>> {

@@ -10,6 +10,10 @@ export class OutcomeList extends Document {
   user: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Quizz', required: true })
+  quizz: Types.ObjectId;
+
+  @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'Outcome', required: true, default: [] })
   outcome: Types.ObjectId[];
 

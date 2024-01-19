@@ -6,12 +6,16 @@ import { User } from '@models/user.model';
 import { QuizzDTO, UpdateQuizzDTO } from 'src/dto/quizz.dto';
 import { SEARCH_BY } from '@common/constants/global.const';
 import { CoursesRepository } from '@modules/course/course.repository';
+import { Connection } from 'mongoose';
+import { InjectConnection } from '@nestjs/mongoose';
 
 @Injectable()
 export class QuizzService {
   constructor(
     private quizzRepository: QuizzsRepository,
     private courseRepository: CoursesRepository,
+    @InjectConnection()
+    private readonly connection: Connection,
   ) {}
 
   async getOne(id: string): Promise<Quizz> {
@@ -27,10 +31,19 @@ export class QuizzService {
     return { data, total };
   }
 
-  async create(data: QuizzDTO): Promise<Quizz | null> {
-    const quizz = await this.quizzRepository.create(data);
-    await this.courseRepository.update(data.course, { $push: { quizzs: quizz } });
-    return quizz;
+  async create(data: QuizzDTO): Promise<Quizz> {
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      const quizz = await this.quizzRepository.create(data);
+      await this.courseRepository.update(data.course, { $push: { quizzs: quizz } });
+      await session.commitTransaction();
+      return quizz;
+    } catch (e) {
+      await session.abortTransaction();
+    } finally {
+      await session.endSession();
+    }
   }
 
   async update(user: User, id: string, data: UpdateQuizzDTO): Promise<Quizz | null> {

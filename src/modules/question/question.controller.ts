@@ -22,8 +22,8 @@ export class QuestionController {
   @Auth([Roles.TEACHER])
   @ApiBody({ type: QuestionDTO })
   @ApiNormalResponse({ model: Question, type: ResponseType.Ok })
-  createMajor(@Body() body: QuestionDTO) {
-    return this.questionService.create(body);
+  createMajor(@Body() body: QuestionDTO, @Profile() user: User) {
+    return this.questionService.create(user,body);
   }
 
   @Get('get-all')
