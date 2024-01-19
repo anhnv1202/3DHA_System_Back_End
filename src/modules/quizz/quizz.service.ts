@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { QuizzsRepository } from './quizz.repository';
 import { Quizz } from '@models/quizz.model';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
@@ -8,6 +8,7 @@ import { SEARCH_BY } from '@common/constants/global.const';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
+import { quizzPopulate } from '@common/constants/populate.const';
 
 @Injectable()
 export class QuizzService {
@@ -19,14 +20,14 @@ export class QuizzService {
   ) {}
 
   async getOne(id: string): Promise<Quizz> {
-    return await this.quizzRepository.findById(id, ['questions']);
+    return await this.quizzRepository.findById(id, quizzPopulate);
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<Quizz>> {
     const [data, total] = await this.quizzRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.COURSE,
-      populates: [{ path: 'course', populate: { path: 'author', select: '_id' } }, { path: 'questions' }],
+      populates: quizzPopulate,
     });
     return { data, total };
   }
@@ -41,6 +42,7 @@ export class QuizzService {
       return quizz;
     } catch (e) {
       await session.abortTransaction();
+      throw new InternalServerErrorException(e);
     } finally {
       await session.endSession();
     }

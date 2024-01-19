@@ -5,13 +5,14 @@ import { Question } from '@models/question.model';
 import { QuestionDTO, UpdateQuestionDTO } from 'src/dto/question.dto';
 import { SEARCH_BY } from '@common/constants/global.const';
 import { User } from '@models/user.model';
+import { questionPopulate } from '@common/constants/populate.const';
 
 @Injectable()
 export class QuestionService {
   constructor(private questionRepository: QuestionsRepository) {}
 
   async getOne(user: User, id: string): Promise<Question> {
-    const question = (await this.questionRepository.findById(id, [{ path: 'createdBy' }])).toObject();
+    const question = (await this.questionRepository.findById(id, questionPopulate)).toObject();
     if (question.createdBy._id.toString() !== user._id) throw new BadRequestException('permission-denied');
     return await this.questionRepository.findById(id);
   }
@@ -20,7 +21,7 @@ export class QuestionService {
     const [data, total] = await this.questionRepository.paginate({
       pagination,
       searchBy: SEARCH_BY.QUESTION,
-      populates: [{ path: 'createdBy' }],
+      populates: questionPopulate,
     });
     return { data, total };
   }

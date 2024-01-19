@@ -7,6 +7,8 @@ import { Quizz } from '@models/quizz.model';
 import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
 import { OutcomeService } from './outcome.service';
+import { OutcomeList } from '@models/outcomeList.model';
+import { OutcomeListDTO } from 'src/dto/outcomeList.dto';
 
 @Controller('outcome')
 @ApiTags('outcome')
@@ -23,9 +25,9 @@ export class OutcomeController {
 
     @Post('calculate')
     @ApiBearerAuth()
-    // @ApiBody()
-    @ApiNormalResponse({ model: Quizz, type: ResponseType.Ok })
-    calculateOutcome(@Body() body: any, @Profile() user: User) {
+    @ApiBody({type: OutcomeListDTO})
+    @ApiNormalResponse({ model: OutcomeList, type: ResponseType.Ok })
+    calculateOutcome(@Body() body: OutcomeListDTO, @Profile() user: User) {
       return this.outcomeService.calculate(user,body);
     }
 }

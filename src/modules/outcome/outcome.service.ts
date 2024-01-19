@@ -4,10 +4,12 @@ import { OutcomeDTO } from 'src/dto/outcome.dto';
 import { QuestionsRepository } from '@modules/question/question.repository';
 import { User } from '@models/user.model';
 import { OutcomesRepository } from './outcome.repository';
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { OutcomeListsRepository } from '@modules/outcome-list/outcome-list.repository';
 import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
+import { OutcomeListDTO } from 'src/dto/outcomeList.dto';
+import { outcomeListPopulate } from '@common/constants/populate.const';
 
 @Injectable()
 export class OutcomeService {
@@ -25,8 +27,14 @@ export class OutcomeService {
     session.startTransaction();
     try {
       const { quizzId, numberQuestion } = data;
-      const quizz = (await this.quizzRepository.findById(quizzId, ['questions', 'course', 'outcomeList'])).toObject();
-      if (!quizz) throw new BadRequestException('cannot find');
+      const quizz = (
+        await this.quizzRepository.findById(quizzId, [
+          { path: 'questions', select: '-outcome' },
+          'course',
+          'outcomeList',
+        ])
+      ).toObject();
+      if (!quizz) throw new BadRequestException('cannot-find-quizz');
 
       // if (!user.courseList.includes(quizz.course)) {
       //   throw new BadRequestException('permission-denied');
@@ -49,48 +57,56 @@ export class OutcomeService {
       return selectedQuestions;
     } catch (e) {
       await session.abortTransaction();
+      throw new InternalServerErrorException(e);
     } finally {
       await session.endSession();
     }
   }
 
-  async calculate(user: User, data: any) {
+  async calculate(user: User, data: OutcomeListDTO) {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
       const { quizzId, questions } = data;
       const numberQuestion = questions.length;
-      let wrongAnswer = 0;
-      let noAnswer = 0;
+      let wrongAnswers = 0;
+      let noAnswers = 0;
       for (const item of questions) {
         const questionId = Object.keys(item)[0];
         const userAnswer = item[questionId];
         const question = (await this.questionRepository.findById(questionId)).toObject();
-        if (!question) throw new BadRequestException('cannot find');
+        if (!question) throw new BadRequestException('cannot-find-question');
         if (userAnswer !== 'E') {
           if (question.outcome !== userAnswer) {
-            wrongAnswer++;
+            wrongAnswers++;
           }
-        } else noAnswer++;
+        } else noAnswers++;
       }
-      const correctAnswer = numberQuestion - wrongAnswer - noAnswer;
+      const correctAnswer = numberQuestion - wrongAnswers - noAnswers;
       const score = (correctAnswer / numberQuestion) * 10;
-      const outcomeData = { numberQuestion, noAnswer, wrongAnswer, score };
+      const outcomeData = { numberQuestion, noAnswers, wrongAnswers, score };
       const outcome = await this.outcomeRepository.create(outcomeData);
       const currentOutcomeList = await this.outcomeListRepository.findOne({ user: user._id });
-      if (!currentOutcomeList) throw new BadRequestException('cannot find');
+      if (!currentOutcomeList) throw new BadRequestException('cannot-find-outcomeList');
+
       const outcomeList = await this.outcomeListRepository.update(currentOutcomeList._id, {
-        ...(outcome && { $push: { outcome: outcome } }),
+        ...(outcome && { $push: { outcome: outcome._id } }),
       });
-      if (!outcomeList) throw new BadRequestException('update error');
-      const updateOutcomeList = await this.quizzRepository.update(quizzId, {
-        ...(outcomeList && { $push: { outcomeList: outcomeList } }),
-      });
-      if (!updateOutcomeList) throw new BadRequestException('update error');
+
+      if (!outcomeList) throw new BadRequestException('update-outcomeList-error');
+      const quizz = await this.quizzRepository.findById(quizzId.toString());
+      const outcomeListCurrent = quizz.outcomeList;
+      if (!outcomeListCurrent.includes(outcomeList._id)) {
+        const updateOutcomeList = await this.quizzRepository.update(quizzId, {
+          ...(outcomeList && { $push: { outcomeList: outcomeList._id } }),
+        });
+        if (!updateOutcomeList) throw new BadRequestException('update-quizz-error');
+      }
       await session.commitTransaction();
-      return outcomeList;
+      return await this.outcomeListRepository.findById(currentOutcomeList._id, outcomeListPopulate);
     } catch (e) {
       await session.abortTransaction();
+      throw new InternalServerErrorException(e);
     } finally {
       await session.endSession();
     }

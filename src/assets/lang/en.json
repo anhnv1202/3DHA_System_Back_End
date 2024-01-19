@@ -9,5 +9,12 @@
   "crUser": "Not found user",
   "validation-old-password-equal": "new password is equal to old password",
   "auth-password-not-correct": "password is incorrect",
-  "permission-denied": "Permission denied"
+  "permission-denied": "Permission denied",
+  "cannot-find-quizz": "Cannot find Quizz",
+  "cannot-find-question": "Cannot find Question",
+  "cannot-find-outcomeList": "Cannot find OutcomeList",
+  "update-outcomeList-error": "Update OutcomeList error",
+  "update-quizz-error": "Update Quizz error",
+  "quizz-existed": "Quizz exists",
+  "question-existed": "Question exists"
 }
