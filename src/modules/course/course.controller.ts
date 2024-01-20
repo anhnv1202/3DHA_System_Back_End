@@ -8,7 +8,7 @@ import { Pagination, PaginationResult } from '@common/interfaces/filter.interfac
 import { GetPagination } from '@common/interfaces/pagination-request';
 import { Public } from '@common/decorators/common.decorator';
 import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
-import { CourseDTO, UpdateCourseDTO,CourseQueryDTO } from 'src/dto/course.dto';
+import { CourseDTO, UpdateCourseDTO, CourseQueryDTO } from 'src/dto/course.dto';
 import { Course } from '@models/course.models';
 import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
