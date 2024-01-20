@@ -18,6 +18,7 @@ import { TokenModule } from './modules/token/token.module';
 import { UserModule } from './modules/user/user.module';
 import { MajorModule } from './modules/major/major.module';
 import { CourseModule } from './modules/course/course.module';
+import { QuestionModule } from './modules/question/question.module';
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { CourseModule } from './modules/course/course.module';
     CronJobModule,
     MajorModule,
     CourseModule,
+    QuestionModule,
   ],
   controllers: [],
   providers: [],

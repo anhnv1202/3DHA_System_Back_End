@@ -5,13 +5,14 @@ import { SEARCH_BY } from '@common/constants/global.const';
 import { Course } from '@models/course.models';
 import { CourseDTO, UpdateCourseDTO } from 'src/dto/course.dto';
 import { User } from '@models/user.model';
+import { coursePopulate } from '@common/constants/populate.const';
 
 @Injectable()
 export class CourseService {
   constructor(private courseRepository: CoursesRepository) {}
 
   async getOne(id: string): Promise<Course> {
-    return await this.courseRepository.findById(id);
+    return await this.courseRepository.findById(id,coursePopulate);
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<Course>> {
