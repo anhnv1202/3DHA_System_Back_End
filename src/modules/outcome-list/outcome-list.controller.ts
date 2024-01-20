@@ -1,4 +1,4 @@
-import { ApiBearerAuth, ApiParam, ApiQuery } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { Controller, Get, Param } from '@nestjs/common';
 import { OutcomeListService } from './outcome-list.service';
 import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
@@ -12,6 +12,7 @@ import { User } from '@models/user.model';
 import { Auth } from '@common/decorators/auth.decorator';
 
 @Controller('outcome-list')
+@ApiTags('outcome-list')
 export class OutcomeListController {
   constructor(private outcomeListService: OutcomeListService) {}
 

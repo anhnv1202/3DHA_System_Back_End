@@ -1,5 +1,6 @@
+import { Question } from '@common/interfaces/outcomeList';
 import { IsNotEmpty, IsString, IsArray, IsObject } from '@common/validator';
-import { Question } from '@models/question.model';
+
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
