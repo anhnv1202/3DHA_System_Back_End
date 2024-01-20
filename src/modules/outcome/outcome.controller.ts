@@ -23,6 +23,7 @@ export class OutcomeController {
     return this.outcomeService.create(user, body);
   }
 
+  
   @Post('calculate')
   @ApiBearerAuth()
   @ApiBody({ type: OutcomeListDTO })
