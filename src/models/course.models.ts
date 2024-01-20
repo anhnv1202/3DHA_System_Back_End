@@ -1,7 +1,13 @@
 import { DEFAULT_THUMB_COURSE } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
-import { Document, Types } from 'mongoose';
+import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
+import { Major } from './major.models';
+import { User } from './user.model';
+import { Quizz } from './quizz.model';
+import { Chapter } from './chapter.model';
+import { Discount } from './discount.model';
+import { Rating } from './rating.model';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
@@ -14,8 +20,8 @@ export class Course extends Document {
   description: string[];
 
   @ApiProperty()
-  @Prop({ required: true, type: Types.ObjectId })
-  major: Types.ObjectId;
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'Major' })
+  major: PopulatedDoc<Major, Types.ObjectId>;
 
   @ApiProperty()
   @Prop({ required: true })
@@ -26,32 +32,32 @@ export class Course extends Document {
   thumbnail: string;
 
   @ApiProperty()
-  @Prop({ required: true, type: Types.ObjectId })
-  author: Types.ObjectId;
+  @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
+  author: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
-  quizzs: Types.ObjectId[];
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Quizz', required: false, default: [] })
+  quizzs: PopulatedDoc<Quizz, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
-  chapters: Types.ObjectId[];
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Chapter', default: [] })
+  chapters: PopulatedDoc<Chapter, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop()
   sold: number;
 
   @ApiProperty()
-  @Prop()
-  ratings: Types.ObjectId;
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Rating', default: [] })
+  ratings: PopulatedDoc<Rating, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop()
   totalRatings: number;
 
   @ApiProperty()
-  @Prop({ type: Types.ObjectId })
-  discount: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'Discount' })
+  discount: PopulatedDoc<Discount, Types.ObjectId>;
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
