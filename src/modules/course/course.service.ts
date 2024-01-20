@@ -12,7 +12,7 @@ export class CourseService {
   constructor(private courseRepository: CoursesRepository) {}
 
   async getOne(id: string): Promise<Course> {
-    return await this.courseRepository.findById(id,coursePopulate);
+    return await this.courseRepository.findById(id, coursePopulate);
   }
 
   async getAll(pagination: Pagination): Promise<PaginationResult<Course>> {
