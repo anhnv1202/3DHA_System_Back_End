@@ -49,6 +49,13 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export enum Answer {
+  A = 'A',
+  B = 'B',
+  C = 'C',
+  D = 'D',
+}
+
 export const ROLE_NORMAL = [Roles.STUDENT, Roles.TEACHER];
 export const ROLE_ARRAY = [Roles.STUDENT, Roles.TEACHER, Roles.ADMIN];
 
@@ -102,4 +109,7 @@ export const SEARCH_BY = {
   USER: ['name', 'role'],
   MAJOR: ['title'],
   COURSE: ['name', 'major', 'author'],
+  QUESTION: ['detail'],
+  QUIZZ: ['name'],
+  OUTCOME_LIST: ['user'],
 };
