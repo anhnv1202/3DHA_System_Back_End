@@ -169,10 +169,10 @@ export class AuthService {
         throw new BadRequestException('auth-password-not-correct');
       }
 
-      if (newPassword !== confirmPassword) throw new BadRequestException('auth-password-not-same');
-
+      if (newPassword !== confirmPassword) {
+        throw new BadRequestException('auth-password-not-same');
+      }
       if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
-
       const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword });
       await session.commitTransaction();
       return userRes;
