@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsObject, IsOptional, IsString } from '@common/validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Types } from 'mongoose';
 
@@ -22,21 +22,6 @@ export class CourseDTO {
   @IsNumber()
   @IsNotEmpty()
   price: number;
-
-  // @ApiProperty()
-  // @IsString()
-  // @IsNotEmpty()
-  // thumbnail: string;
-
-  // @ApiProperty()
-  // @IsObject()
-  // @IsNotEmpty()
-  // quizzs: Types.ObjectId[];
-
-  // @ApiProperty()
-  // @IsObject()
-  // @IsNotEmpty()
-  // chapters: Types.ObjectId[];
 }
 
 export class CourseQueryDTO {
@@ -78,7 +63,7 @@ export class UpdateCourseDTO {
   description?: string;
 
   @ApiProperty()
-  @IsObject()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
   major?: Types.ObjectId;
@@ -96,19 +81,19 @@ export class UpdateCourseDTO {
   thumbnail?: string;
 
   @ApiProperty()
-  @IsObject()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
-  quizzs?: Types.ObjectId[];
+  quizz?: Types.ObjectId;
 
   @ApiProperty()
-  @IsObject()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
-  chapters?: Types.ObjectId[];
+  chapters?: Types.ObjectId;
 
   @ApiProperty()
-  @IsObject()
+  @IsString()
   @IsNotEmpty()
   @IsOptional()
   discount?: Types.ObjectId;

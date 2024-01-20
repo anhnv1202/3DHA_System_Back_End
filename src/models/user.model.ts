@@ -3,7 +3,8 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
-import { Document } from 'mongoose';
+import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
+import { Course } from './course.models';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -41,6 +42,14 @@ export class User extends Document {
   @ApiProperty()
   @Prop({ required: false, default: Roles.STUDENT })
   role: Roles;
+
+  @ApiProperty()
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
+  wishList: PopulatedDoc<Course, Types.ObjectId>[];
+
+  @ApiProperty()
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
+  courseList: PopulatedDoc<Course, Types.ObjectId>[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
