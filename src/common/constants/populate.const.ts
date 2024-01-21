@@ -12,6 +12,7 @@ export const coursePopulate = [
 
 export const quizzPopulate = [
   { path: 'questions', select: '-outcome' },
+  { path: 'course', select: 'name' },
   {
     path: 'outcomeList',
     populate: [
@@ -29,3 +30,10 @@ export const outcomeListPopulate = [
   { path: 'quizz', select: 'name' },
   { path: 'user', select: 'name' },
 ];
+
+export const chapterPopulate = [
+  { path: 'lessons', select: '-outcome' },
+  { path: 'course', select: 'name' },
+];
+
+export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];

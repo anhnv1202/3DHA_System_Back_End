@@ -22,6 +22,7 @@ import { QuestionModule } from './modules/question/question.module';
 import { QuizzModule } from './modules/quizz/quizz.module';
 import { OutcomeModule } from './modules/outcome/outcome.module';
 import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
+import { ChapterModule } from './modules/chapter/chapter.module';
 
 @Module({
   imports: [
@@ -74,6 +75,7 @@ import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
     QuizzModule,
     OutcomeModule,
     OutcomeListModule,
+    ChapterModule,
   ],
   controllers: [],
   providers: [],
