@@ -53,8 +53,8 @@ export class ChapterService {
     if (currentChapter.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const questions = currentChapter.lessons.toString();
-    const isQuestionExist = questions.includes(data.lesson);
+    const chapters = currentChapter.lessons.toString();
+    const isQuestionExist = chapters.includes(data.lesson);
     if (isQuestionExist) throw new BadRequestException('exist');
     return await this.chapterRepository.update(id, {
       ...data,
