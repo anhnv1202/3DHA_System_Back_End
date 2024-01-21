@@ -56,6 +56,13 @@ export enum Answer {
   D = 'D',
 }
 
+export enum Level {
+  Beginner = '1',
+  Intermediate = '2',
+  Expert = '3',
+  All = '4',
+}
+
 export const ROLE_NORMAL = [Roles.STUDENT, Roles.TEACHER];
 export const ROLE_ARRAY = [Roles.STUDENT, Roles.TEACHER, Roles.ADMIN];
 
@@ -108,7 +115,7 @@ export const QUERY_PARAM_PARSE = {
 export const SEARCH_BY = {
   USER: ['name', 'role'],
   MAJOR: ['title'],
-  COURSE: ['name', 'major', 'author'],
+  COURSE: ['name', 'major', 'author','level'],
   QUESTION: ['detail'],
   QUIZZ: ['name'],
   OUTCOME_LIST: ['user'],
