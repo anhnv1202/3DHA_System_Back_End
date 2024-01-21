@@ -22,6 +22,11 @@ export class CourseDTO {
   @IsNumber()
   @IsNotEmpty()
   price: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  level: string;
 }
 
 export class CourseQueryDTO {
@@ -47,6 +52,12 @@ export class CourseQueryDTO {
   @IsNotEmpty()
   @IsOptional()
   price?: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  level?: string;
 }
 
 export class UpdateCourseDTO {
@@ -73,6 +84,12 @@ export class UpdateCourseDTO {
   @IsNotEmpty()
   @IsOptional()
   price?: number;
+
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  @IsOptional()
+  level?: string;
 
   @ApiProperty()
   @IsString()
