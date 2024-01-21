@@ -8,7 +8,7 @@ import { SEARCH_BY } from '@common/constants/global.const';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { Connection } from 'mongoose';
 import { InjectConnection } from '@nestjs/mongoose';
-import { quizzPopulate } from '@common/constants/populate.const';
+import { authorFromCoursePopulate, quizzPopulate } from '@common/constants/populate.const';
 
 @Injectable()
 export class QuizzService {
@@ -49,7 +49,7 @@ export class QuizzService {
   }
 
   async update(user: User, id: string, data: UpdateQuizzDTO): Promise<Quizz | null> {
-    const currentQuizz = (await this.quizzRepository.findById(id, [{ path: 'course', populate: 'author' }])).toObject();
+    const currentQuizz = (await this.quizzRepository.findById(id, authorFromCoursePopulate)).toObject();
     if (currentQuizz.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
@@ -63,7 +63,7 @@ export class QuizzService {
   }
 
   async delete(user: User, id: string): Promise<Quizz | null> {
-    const currentQuizz = (await this.quizzRepository.findById(id, [{ path: 'course', populate: 'author' }])).toObject();
+    const currentQuizz = (await this.quizzRepository.findById(id, authorFromCoursePopulate)).toObject();
     if (currentQuizz.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
