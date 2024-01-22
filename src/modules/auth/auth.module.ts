@@ -1,3 +1,4 @@
+import { GoogleStrategy } from './google.strategy';
 import { MailModule } from '@modules/mail/mail.module';
 import { TokenModule } from '@modules/token/token.module';
 import { UserModule } from '@modules/user/user.module';
@@ -9,6 +10,6 @@ import { AuthService } from './auth.service';
 @Module({
   imports: [UserModule, JwtModule, MailModule, TokenModule],
   controllers: [AuthController],
-  providers: [AuthService],
+  providers: [AuthService, GoogleStrategy],
 })
 export class AuthModule {}

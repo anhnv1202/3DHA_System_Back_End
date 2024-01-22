@@ -4,7 +4,7 @@ import { Public } from '@common/decorators/common.decorator';
 import { Profile } from '@common/decorators/user.decorator';
 import { ExcludePasswordInterceptor } from '@interceptors/exclude-password.interceptor';
 import { User } from '@models/user.model';
-import { Body, Controller, Post, Request, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Request, UseGuards, UseInterceptors } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   ChangePasswordDTO,
@@ -15,6 +15,8 @@ import {
   SuccessResponseDTO,
 } from 'src/dto/auth.dto';
 import { AuthService } from './auth.service';
+// import { GoogleAuthGuard } from './google.strategy';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('auth')
@@ -27,6 +29,14 @@ export class AuthController {
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
   login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
+  }
+
+  @Get('/login-google')
+  @Public()
+  @UseGuards(AuthGuard('google'))
+  @ApiNormalResponse({ model: User, type: ResponseType.Ok })
+  googleAuthRedirect(@Req() req) {
+    return this.authService.googleLogin(req);
   }
 
   @Post('/register')

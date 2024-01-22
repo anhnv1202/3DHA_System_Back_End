@@ -65,6 +65,27 @@ export class AuthService {
     return { accessToken, user: rest };
   }
 
+  async googleLogin(req) {
+    const { email } = req.user;
+    if (!req.user) {
+      return 'No user from google';
+    }
+    const existUser = await this.userService.getOneBy({ email });
+
+    if (existUser) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: dummy, ...rest } = existUser.toObject();
+      const accessToken = this.jwt.sign(rest, { secret: process.env.JWT_SECRET_KEY, expiresIn: '24h' });
+      return { accessToken, user: rest };
+    } else {
+      const user = await this.userService.createOne({ ...req.user, status: true });
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { password: dummy, ...rest } = user.toObject();
+      const accessToken = this.jwt.sign(rest, { secret: process.env.JWT_SECRET_KEY, expiresIn: '24h' });
+      return { accessToken, user: rest };
+    }
+  }
+
   async confirm(token: string): Promise<SuccessResponseDTO> {
     const session = await this.connection.startSession();
     session.startTransaction();
