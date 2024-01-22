@@ -5,6 +5,7 @@ import { Profile } from '@common/decorators/user.decorator';
 import { ExcludePasswordInterceptor } from '@interceptors/exclude-password.interceptor';
 import { User } from '@models/user.model';
 import { Body, Controller, Get, Post, Req, Request, UseGuards, UseInterceptors } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   ChangePasswordDTO,
@@ -15,7 +16,6 @@ import {
   SuccessResponseDTO,
 } from 'src/dto/auth.dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 @ApiTags('auth')
