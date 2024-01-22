@@ -15,7 +15,6 @@ import {
   SuccessResponseDTO,
 } from 'src/dto/auth.dto';
 import { AuthService } from './auth.service';
-// import { GoogleAuthGuard } from './google.strategy';
 import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')

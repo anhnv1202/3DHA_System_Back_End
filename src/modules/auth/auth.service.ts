@@ -68,7 +68,7 @@ export class AuthService {
   async googleLogin(req) {
     const { email } = req.user;
     if (!req.user) {
-      return 'No user from google';
+      throw new InternalServerErrorException('cannot-login-by-google');
     }
     const existUser = await this.userService.getOneBy({ email });
 

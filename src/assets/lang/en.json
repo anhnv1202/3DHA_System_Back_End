@@ -9,5 +9,6 @@
   "crUser": "Not found user",
   "validation-old-password-equal": "new password is equal to old password",
   "auth-password-not-correct": "password is incorrect",
-  "permission-denied": "Permission denied"
+  "permission-denied": "Permission denied",
+  "cannot-login-by-google": "Login by Google fail"
 }
