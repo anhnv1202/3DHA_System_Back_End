@@ -2,14 +2,13 @@ import { SEARCH_BY } from '@common/constants/global.const';
 import { authorFromCoursePopulate, chapterPopulate } from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { Chapter } from '@models/chapter.model';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ChapterDTO } from 'src/dto/chapter.dto';
-import { ChaptersRepository } from './chapter.respository';
-// import { ChapterDTO, UpdateChapterDTO,UpdateLessonInChapterDTO } from 'src/dto/chapter.dto';
 import { User } from '@models/user.model';
 import { CoursesRepository } from '@modules/course/course.repository';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
+import { ChapterDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
+import { ChaptersRepository } from './chapter.respository';
 
 @Injectable()
 export class ChapterService {
@@ -49,14 +48,13 @@ export class ChapterService {
     }
   }
 
-  // async update(user: User, id: string, data: UpdateChapterDTO): Promise<Chapter | null> {
-  //   const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
-  //   if (currentChapter.course.author._id.toString() !== user._id) {
-  //     throw new BadRequestException('permission-denied');
-  //   }
-  //   if (isQuestionExist) throw new BadRequestException('exist');
-  //   return await this.chapterRepository.update(id, {...data});
-  // }
+  async update(user: User, id: string, data: UpdateChapterDTO): Promise<Chapter | null> {
+    const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
+    if (currentChapter.course.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
+    return await this.chapterRepository.update(id, { ...data });
+  }
 
   // async updateLesson(user: User, id: string, data: UpdateLessonInChapterDTO): Promise<Chapter | null> {
   //     const { option, lesson } = data;
