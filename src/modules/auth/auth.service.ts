@@ -74,13 +74,7 @@ export class AuthService {
 
     if (existUser) {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: dummy, ...rest } = existUser.toObject();
-      const accessToken = this.jwt.sign(rest, { secret: process.env.JWT_SECRET_KEY, expiresIn: '24h' });
-      return { accessToken, user: rest };
-    } else {
-      const user = await this.userService.createOne({ ...req.user, status: true });
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { password: dummy, ...rest } = user.toObject();
+      const { password: dummy, ...rest } = existUser ? existUser.toObject(): (await this.userService.createOne({ ...req.user, status: true })).toObject();
       const accessToken = this.jwt.sign(rest, { secret: process.env.JWT_SECRET_KEY, expiresIn: '24h' });
       return { accessToken, user: rest };
     }
