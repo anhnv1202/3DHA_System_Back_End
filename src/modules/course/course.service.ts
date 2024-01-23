@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CoursesRepository } from './course.repository';
-import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { SEARCH_BY } from '@common/constants/global.const';
-import { Course } from '@models/course.models';
-import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO, UpdateQuizzInCourseDTO } from 'src/dto/course.dto';
-import { User } from '@models/user.model';
 import { coursePopulate } from '@common/constants/populate.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { Course } from '@models/course.models';
+import { User } from '@models/user.model';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import mongoose from 'mongoose';
+import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO, UpdateQuizzInCourseDTO } from 'src/dto/course.dto';
+import { CoursesRepository } from './course.repository';
 
 @Injectable()
 export class CourseService {
@@ -42,16 +43,12 @@ export class CourseService {
     if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const quizzs = currentCourse.quizzs.toString();
-    const isQuizzExist = quizzs.includes(quizz);
-    if (option === 1) {
-      if (isQuizzExist) throw new BadRequestException('quizz-existed');
-      return await this.courseRepository.update(id, { $push: { quizzs: quizz } });
+    const isQuizzExist = currentCourse.questions.includes(new mongoose.Types.ObjectId(quizz));
+    if ((option === 1 && isQuizzExist) || (option === 2 && !isQuizzExist)) {
+      throw new BadRequestException(isQuizzExist ? 'quizz-existed' : 'quizz-not-existed');
     }
-    if (option === 2) {
-      if (!isQuizzExist) throw new BadRequestException('quizz-not-existed');
-      return await this.courseRepository.update(id, { $pull: { quizzs: quizz } });
-    }
+    const updateOperation = option === 1 ? { $push: { quizzs: quizz } } : { $pull: { quizzs: quizz } };
+    return await this.courseRepository.update(id, updateOperation);
   }
 
   async updateChapter(user: User, id: string, data: UpdateChapterInCourseDTO): Promise<Course | null> {
@@ -60,16 +57,12 @@ export class CourseService {
     if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const chapters = currentCourse.chapters.toString();
-    const isChapterExist = chapters.includes(chapter);
-    if (option === 1) {
-      if (isChapterExist) throw new BadRequestException('chapter-existed');
-      return await this.courseRepository.update(id, { $push: { chapters: chapter } });
+    const isChapterExist = currentCourse.chapters.includes(new mongoose.Types.ObjectId(chapter));
+    if ((option === 1 && isChapterExist) || (option === 2 && !isChapterExist)) {
+      throw new BadRequestException(isChapterExist ? 'chapter-existed' : 'chapter-not-existed');
     }
-    if (option === 2) {
-      if (!isChapterExist) throw new BadRequestException('chapter-not-existed');
-      return await this.courseRepository.update(id, { $pull: { chapters: chapter } });
-    }
+    const updateOperation = option === 1 ? { $push: { chapters: chapter } } : { $pull: { chapters: chapter } };
+    return await this.courseRepository.update(id, updateOperation);
   }
 
   async delete(user: User, id: string): Promise<Course | null> {

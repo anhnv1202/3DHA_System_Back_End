@@ -3,7 +3,7 @@ import { CoursesRepository } from '@modules/course/course.repository';
 import { UsersRepository } from '@modules/user/user.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
-import { Connection } from 'mongoose';
+import mongoose, { Connection } from 'mongoose';
 import { WishListDTO } from 'src/dto/wishList.dto';
 
 @Injectable()
@@ -16,28 +16,26 @@ export class WishlistService {
   ) {}
 
   async getAll(user: User) {
-    const existUser = await this.userRepository.findById(user._id, [{ path: 'wishList', select: 'name' }]);
-    return existUser.wishList;
+    return (await this.userRepository.findById(user._id, [{ path: 'wishList', select: 'name' }])).wishList;
   }
 
   async update(user: User, data: WishListDTO): Promise<User | null> {
-    const { option, course } = data;
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const existCourse = await this.courseRepository.findById(course.toString());
-      if (!existCourse) throw new BadRequestException('cannot-find-course');
-      const existUser = await this.userRepository.findById(user._id);
-      const wishLists = existUser.wishList.toString();
-      const isCourseExist = wishLists.includes(course.toString());
-      if (option === 1) {
-        if (isCourseExist) throw new BadRequestException('course-existed');
-        return await this.userRepository.update(user._id, { $push: { wishList: course } });
+      const { option, course } = data;
+      if (!(await this.courseRepository.findById(course))) {
+        throw new BadRequestException('cannot-find-course');
       }
-      if (option === 2) {
-        if (!isCourseExist) throw new BadRequestException('course-not-existed');
-        return await this.userRepository.update(user._id, { $pull: { wishList: course } });
+      const isCourseExist = (await this.userRepository.findById(user._id)).wishList.includes(
+        new mongoose.Types.ObjectId(course),
+      );
+      if ((option === 1 && isCourseExist) || (option === 2 && !isCourseExist)) {
+        throw new BadRequestException(option === 1 ? 'course-existed' : 'course-not-existed');
       }
+      const updateOperation = option === 1 ? { $push: { wishList: course } } : { $pull: { wishList: course } };
+      await session.commitTransaction();
+      return await this.userRepository.update(user._id, updateOperation);
     } catch (e) {
       await session.abortTransaction();
       throw new InternalServerErrorException(e);

@@ -1,14 +1,14 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { QuizzsRepository } from './quizz.repository';
-import { Quizz } from '@models/quizz.model';
-import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
-import { User } from '@models/user.model';
-import { QuizzDTO, UpdateQuizzDTO, UpdateQuestionInQuizzDTO } from 'src/dto/quizz.dto';
 import { SEARCH_BY } from '@common/constants/global.const';
-import { CoursesRepository } from '@modules/course/course.repository';
-import { Connection } from 'mongoose';
-import { InjectConnection } from '@nestjs/mongoose';
 import { authorFromCoursePopulate, quizzPopulate } from '@common/constants/populate.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { Quizz } from '@models/quizz.model';
+import { User } from '@models/user.model';
+import { CoursesRepository } from '@modules/course/course.repository';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
+import mongoose, { Connection } from 'mongoose';
+import { QuizzDTO, UpdateQuestionInQuizzDTO, UpdateQuizzDTO } from 'src/dto/quizz.dto';
+import { QuizzsRepository } from './quizz.repository';
 
 @Injectable()
 export class QuizzService {
@@ -62,16 +62,12 @@ export class QuizzService {
     if (currentQuizz.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const questions = currentQuizz.questions.toString();
-    const isQuestionExist = questions.includes(question);
-    if (option === 1) {
-      if (isQuestionExist) throw new BadRequestException('question-existed');
-      return await this.quizzRepository.update(id, { $push: { questions: question } });
+    const isQuestionExist = currentQuizz.questions.includes(new mongoose.Types.ObjectId(question));
+    if ((option === 1 && isQuestionExist) || (option === 2 && !isQuestionExist)) {
+      throw new BadRequestException(isQuestionExist ? 'question-existed' : 'question-not-existed');
     }
-    if (option === 2) {
-      if (!isQuestionExist) throw new BadRequestException('question-not-existed');
-      return await this.quizzRepository.update(id, { $pull: { questions: question } });
-    }
+    const updateOperation = option === 1 ? { $push: { questions: question } } : { $pull: { questions: question } };
+    return await this.quizzRepository.update(id, updateOperation);
   }
 
   async delete(user: User, id: string): Promise<Quizz | null> {
