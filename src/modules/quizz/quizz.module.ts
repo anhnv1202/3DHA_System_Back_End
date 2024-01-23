@@ -8,7 +8,7 @@ import { CourseModule } from '@modules/course/course.module';
 import { QuestionModule } from '@modules/question/question.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Quizz.name, schema: QuizzSchema }]), CourseModule,QuestionModule],
+  imports: [MongooseModule.forFeature([{ name: Quizz.name, schema: QuizzSchema }]), CourseModule, QuestionModule],
   controllers: [QuizzController],
   providers: [QuizzsRepository, QuizzService],
   exports: [QuizzsRepository, QuizzService],

@@ -7,7 +7,6 @@ import { ResponseType } from '@common/constants/global.const';
 import { Profile } from '@common/decorators/user.decorator';
 import { WishListDTO } from 'src/dto/wishList.dto';
 
-
 @Controller('wishlist')
 @ApiTags('wishlist')
 export class WishlistController {
@@ -15,7 +14,7 @@ export class WishlistController {
   @Get('get')
   @ApiBearerAuth()
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
-  getUser(@Profile() user: User){
+  getUser(@Profile() user: User) {
     return this.wishlistService.getAll(user);
   }
 
@@ -23,7 +22,7 @@ export class WishlistController {
   @ApiBearerAuth()
   @ApiBody({ type: WishListDTO })
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
-  updateWishlist(@Body() body:WishListDTO, @Profile() user: User) {
+  updateWishlist(@Body() body: WishListDTO, @Profile() user: User) {
     return this.wishlistService.update(user, body);
   }
 }

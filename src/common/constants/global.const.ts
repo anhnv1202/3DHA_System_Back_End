@@ -58,7 +58,7 @@ export enum Answer {
 
 export enum Option {
   add = 1,
-  remove = 2
+  remove = 2,
 }
 
 export enum Level {

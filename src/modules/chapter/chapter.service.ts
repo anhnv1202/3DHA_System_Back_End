@@ -64,17 +64,13 @@ export class ChapterService {
   // }
 
   // async updateLesson(user: User, id: string, data: UpdateLessonInChapterDTO): Promise<Chapter | null> {
-  //   const { option, lesson } = data;
   //   const session = await this.connection.startSession();
   //   session.startTransaction();
   //   try {
+  //     const { option, lesson } = data;
   //     const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
   //     if (currentChapter.course.author._id.toString() !== user._id) {
   //       throw new BadRequestException('permission-denied');
-  //     }
-  //     const existLesson = await this.lessonRepository.findById(lesson.toString());
-  //     if (!existLesson) {
-  //       throw new BadRequestException('cannot-find-lesson');
   //     }
   //     const lessons = currentChapter.questilessonsons.toString();
   //     const isLessonExist = lessons.includes(lesson);

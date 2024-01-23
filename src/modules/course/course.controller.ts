@@ -70,7 +70,11 @@ export class CourseController {
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiBody({ type: UpdateChapterInCourseDTO })
   @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
-  updateChapterInCourse(@Body() body: UpdateChapterInCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
+  updateChapterInCourse(
+    @Body() body: UpdateChapterInCourseDTO,
+    @Param() params: { id: string },
+    @Profile() user: User,
+  ) {
     return this.courseService.updateChapter(user, params.id, body);
   }
 

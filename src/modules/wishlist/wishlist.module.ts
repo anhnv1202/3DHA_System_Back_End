@@ -5,8 +5,8 @@ import { UserModule } from '@modules/user/user.module';
 import { CourseModule } from '@modules/course/course.module';
 
 @Module({
-  imports: [UserModule,CourseModule],
+  imports: [UserModule, CourseModule],
   controllers: [WishlistController],
-  providers: [WishlistService]
+  providers: [WishlistService],
 })
 export class WishlistModule {}

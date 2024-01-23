@@ -58,4 +58,3 @@ export class UpdateLessonInChapterDTO {
   @IsNotEmpty()
   lesson: string;
 }
-
