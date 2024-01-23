@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Option } from '@common/constants/global.const';
 
@@ -14,7 +14,7 @@ export class ChapterDTO {
   description: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   course: string;
 }
@@ -41,7 +41,7 @@ export class UpdateChapterDTO {
   description?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   @IsOptional()
   course?: string;
@@ -54,7 +54,7 @@ export class UpdateLessonInChapterDTO {
   option: Option;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   lesson: string;
 }

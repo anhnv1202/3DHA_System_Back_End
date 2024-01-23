@@ -12,6 +12,7 @@ import {
   IsOptional as _IsOptional,
   IsString as _IsString,
   Matches as _Matches,
+  IsMongoId as _IsMongoId,
 } from 'class-validator';
 import { VALIDATE_MESSAGE } from './message-validate';
 
@@ -59,3 +60,6 @@ export const IsNumber = (options?: IsNumberOptions, validationOptions?: Validati
 
 export const IsObject = (validationOptions?: ValidationOptions) =>
   _IsObject({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
+
+export const IsMongoId = (validationOptions?: ValidationOptions) =>
+  _IsMongoId({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
