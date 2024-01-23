@@ -1,15 +1,15 @@
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { ChaptersRepository } from './chapter.respository';
-import { Chapter } from '@models/chapter.model';
-import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { SEARCH_BY } from '@common/constants/global.const';
 import { authorFromCoursePopulate, chapterPopulate } from '@common/constants/populate.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { Chapter } from '@models/chapter.model';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { ChapterDTO } from 'src/dto/chapter.dto';
+import { ChaptersRepository } from './chapter.respository';
 // import { ChapterDTO, UpdateChapterDTO,UpdateLessonInChapterDTO } from 'src/dto/chapter.dto';
+import { User } from '@models/user.model';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
-import { User } from '@models/user.model';
 
 @Injectable()
 export class ChapterService {
@@ -54,40 +54,22 @@ export class ChapterService {
   //   if (currentChapter.course.author._id.toString() !== user._id) {
   //     throw new BadRequestException('permission-denied');
   //   }
-  //   const chapters = currentChapter.lessons.toString();
-  //   const isQuestionExist = chapters.includes(data.lesson);
   //   if (isQuestionExist) throw new BadRequestException('exist');
-  //   return await this.chapterRepository.update(id, {
-  //     ...data,
-  //     ...(data.lesson && { $push: { lessons: data.lesson } }),
-  //   });
+  //   return await this.chapterRepository.update(id, {...data});
   // }
 
   // async updateLesson(user: User, id: string, data: UpdateLessonInChapterDTO): Promise<Chapter | null> {
-  //   const session = await this.connection.startSession();
-  //   session.startTransaction();
-  //   try {
   //     const { option, lesson } = data;
   //     const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
   //     if (currentChapter.course.author._id.toString() !== user._id) {
   //       throw new BadRequestException('permission-denied');
   //     }
-  //     const lessons = currentChapter.questilessonsons.toString();
-  //     const isLessonExist = lessons.includes(lesson);
-  //     if (option === 1) {
-  //       if (isLessonExist) throw new BadRequestException('lesson-existed');
-  //       return await this.chapterRepository.update(id, { $push: { lessons: lesson } });
-  //     }
-  //     if (option === 2) {
-  //       if (!isLessonExist) throw new BadRequestException('lesson-not-existed');
-  //       return await this.chapterRepository.update(id, { $pull: { lessons: lesson } });
-  //     }
-  //   } catch (e) {
-  //     await session.abortTransaction();
-  //     throw new InternalServerErrorException(e);
-  //   } finally {
-  //     await session.endSession();
-  //   }
+  // const isLessonExist = currentChapter.lessons.includes(new mongoose.Types.ObjectId(lesson));
+  // if ((option === 1 && isLessonExist) || (option === 2 && !isLessonExist)) {
+  //   throw new BadRequestException(isLessonExist ? 'lesson-existed' : 'lesson-not-existed');
+  // }
+  // const updateOperation = option === 1 ? { $push: { lessons: lesson } } : { $pull: { lessons: lesson } };
+  // return await this.chapterRepository.update(id, updateOperation);
   // }
 
   async delete(user: User, id: string): Promise<Chapter | null> {
