@@ -1,3 +1,4 @@
+import { UpdateChapterInCourseDTO } from './../../dto/course.dto';
 import { Body, Controller, Post, Get, Param, Put, Delete } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { CourseService } from './course.service';
@@ -8,7 +9,7 @@ import { Pagination, PaginationResult } from '@common/interfaces/filter.interfac
 import { GetPagination } from '@common/interfaces/pagination-request';
 import { Public } from '@common/decorators/common.decorator';
 import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
-import { CourseDTO, UpdateCourseDTO, CourseQueryDTO } from 'src/dto/course.dto';
+import { CourseDTO, UpdateCourseDTO, CourseQueryDTO, UpdateQuizzInCourseDTO } from 'src/dto/course.dto';
 import { Course } from '@models/course.models';
 import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
@@ -51,6 +52,26 @@ export class CourseController {
   @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
   updateCourse(@Body() body: UpdateCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
     return this.courseService.update(user, params.id, body);
+  }
+
+  @Put('update-quizz/:id')
+  @ApiBearerAuth()
+  @Auth([Roles.TEACHER])
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiBody({ type: UpdateQuizzInCourseDTO })
+  @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
+  updateQuizzInCourse(@Body() body: UpdateQuizzInCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
+    return this.courseService.updateQuizz(user, params.id, body);
+  }
+
+  @Put('update-chapter/:id')
+  @ApiBearerAuth()
+  @Auth([Roles.TEACHER])
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiBody({ type: UpdateChapterInCourseDTO })
+  @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
+  updateChapterInCourse(@Body() body: UpdateChapterInCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
+    return this.courseService.updateChapter(user, params.id, body);
   }
 
   @Delete('delete/:id')

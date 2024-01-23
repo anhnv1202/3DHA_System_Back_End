@@ -4,7 +4,8 @@ import { Chapter } from '@models/chapter.model';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { SEARCH_BY } from '@common/constants/global.const';
 import { authorFromCoursePopulate, chapterPopulate } from '@common/constants/populate.const';
-import { ChapterDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
+import { ChapterDTO } from 'src/dto/chapter.dto';
+// import { ChapterDTO, UpdateChapterDTO,UpdateLessonInChapterDTO } from 'src/dto/chapter.dto';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
@@ -48,19 +49,50 @@ export class ChapterService {
     }
   }
 
-  async update(user: User, id: string, data: UpdateChapterDTO): Promise<Chapter | null> {
-    const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
-    if (currentChapter.course.author._id.toString() !== user._id) {
-      throw new BadRequestException('permission-denied');
-    }
-    const chapters = currentChapter.lessons.toString();
-    const isQuestionExist = chapters.includes(data.lesson);
-    if (isQuestionExist) throw new BadRequestException('exist');
-    return await this.chapterRepository.update(id, {
-      ...data,
-      ...(data.lesson && { $push: { lessons: data.lesson } }),
-    });
-  }
+  // async update(user: User, id: string, data: UpdateChapterDTO): Promise<Chapter | null> {
+  //   const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
+  //   if (currentChapter.course.author._id.toString() !== user._id) {
+  //     throw new BadRequestException('permission-denied');
+  //   }
+  //   const chapters = currentChapter.lessons.toString();
+  //   const isQuestionExist = chapters.includes(data.lesson);
+  //   if (isQuestionExist) throw new BadRequestException('exist');
+  //   return await this.chapterRepository.update(id, {
+  //     ...data,
+  //     ...(data.lesson && { $push: { lessons: data.lesson } }),
+  //   });
+  // }
+
+  // async updateLesson(user: User, id: string, data: UpdateLessonInChapterDTO): Promise<Chapter | null> {
+  //   const { option, lesson } = data;
+  //   const session = await this.connection.startSession();
+  //   session.startTransaction();
+  //   try {
+  //     const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
+  //     if (currentChapter.course.author._id.toString() !== user._id) {
+  //       throw new BadRequestException('permission-denied');
+  //     }
+  //     const existLesson = await this.lessonRepository.findById(lesson.toString());
+  //     if (!existLesson) {
+  //       throw new BadRequestException('cannot-find-lesson');
+  //     }
+  //     const lessons = currentChapter.questilessonsons.toString();
+  //     const isLessonExist = lessons.includes(lesson);
+  //     if (option === 1) {
+  //       if (isLessonExist) throw new BadRequestException('lesson-existed');
+  //       return await this.chapterRepository.update(id, { $push: { lessons: lesson } });
+  //     }
+  //     if (option === 2) {
+  //       if (!isLessonExist) throw new BadRequestException('lesson-not-existed');
+  //       return await this.chapterRepository.update(id, { $pull: { lessons: lesson } });
+  //     }
+  //   } catch (e) {
+  //     await session.abortTransaction();
+  //     throw new InternalServerErrorException(e);
+  //   } finally {
+  //     await session.endSession();
+  //   }
+  // }
 
   async delete(user: User, id: string): Promise<Chapter | null> {
     const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
