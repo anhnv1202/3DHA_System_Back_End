@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationDTO } from './common.dto';
 
 export class MajorDTO {
   @ApiProperty()
@@ -13,7 +14,7 @@ export class MajorDTO {
   description: string;
 }
 
-export class MajorQueryDTO {
+export class MajorQueryDTO extends PaginationDTO{
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
