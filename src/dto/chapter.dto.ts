@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString } from '@common/validator';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { Option } from '@common/constants/global.const';
 
 export class ChapterDTO {
   @ApiProperty()
@@ -14,9 +14,9 @@ export class ChapterDTO {
   description: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  course: Types.ObjectId;
+  course: string;
 }
 
 export class ChapterQueryDTO {
@@ -41,14 +41,20 @@ export class UpdateChapterDTO {
   description?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   @IsOptional()
-  lesson?: Types.ObjectId;
+  course?: string;
+}
+
+export class UpdateLessonInChapterDTO {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  option: Option;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  @IsOptional()
-  course?: Types.ObjectId;
+  lesson: string;
 }
