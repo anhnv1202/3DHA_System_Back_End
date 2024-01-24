@@ -22,13 +22,13 @@ export class OutcomeListService {
     return await this.outcomeListsRepository.findById(id, outcomeListPopulate);
   }
 
-  async getOneByCurrent(user: User, quizzId: string): Promise<OutcomeList> {
+  async getOneByCurrent(user: User, quizz: string): Promise<OutcomeList> {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const quizz = (await this.quizzsRepository.findById(quizzId)).toObject();
-      if (!quizz) throw new BadRequestException('cannot-find-quizz');
-      const matchingOutcomeList = quizz.outcomeList.find((outcomeList) => outcomeList.user._id === user._id);
+      const existQuizz = (await this.quizzsRepository.findById(quizz)).toObject();
+      if (!existQuizz) throw new BadRequestException('cannot-find-quizz');
+      const matchingOutcomeList = existQuizz.outcomeList.find((outcomeList) => outcomeList.user._id === user._id);
       const outcomeList = await this.outcomeListsRepository.findById(matchingOutcomeList._id);
       if (!outcomeList) throw new BadRequestException('cannot-find-outcomeList');
       await session.commitTransaction();

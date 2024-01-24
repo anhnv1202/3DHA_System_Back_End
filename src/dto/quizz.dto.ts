@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsOptional, IsString } from '@common/validator';
+import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
+import { Option } from '@common/constants/global.const';
 
 export class QuizzDTO {
   @ApiProperty()
@@ -9,9 +9,9 @@ export class QuizzDTO {
   name: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  course: Types.ObjectId;
+  course: string;
 }
 
 export class QuizzQueryDTO {
@@ -30,14 +30,20 @@ export class UpdateQuizzDTO {
   name?: string;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   @IsOptional()
-  question?: Types.ObjectId;
+  course?: string;
+}
+
+export class UpdateQuestionInQuizzDTO {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  option: Option;
 
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  @IsOptional()
-  course?: Types.ObjectId;
+  question: string;
 }

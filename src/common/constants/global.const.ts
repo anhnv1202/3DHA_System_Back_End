@@ -56,11 +56,16 @@ export enum Answer {
   D = 'D',
 }
 
+export enum Option {
+  add = 1,
+  remove = 2,
+}
+
 export enum Level {
-  Beginner = '1',
-  Intermediate = '2',
-  Expert = '3',
-  All = '4',
+  Beginner = 1,
+  Intermediate = 2,
+  Expert = 3,
+  All = 4,
 }
 
 export const ROLE_NORMAL = [Roles.STUDENT, Roles.TEACHER];

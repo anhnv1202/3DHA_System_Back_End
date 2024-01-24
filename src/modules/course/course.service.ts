@@ -1,11 +1,12 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
-import { CoursesRepository } from './course.repository';
-import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { SEARCH_BY } from '@common/constants/global.const';
-import { Course } from '@models/course.models';
-import { CourseDTO, UpdateCourseDTO } from 'src/dto/course.dto';
-import { User } from '@models/user.model';
 import { coursePopulate } from '@common/constants/populate.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { Course } from '@models/course.models';
+import { User } from '@models/user.model';
+import { BadRequestException, Injectable } from '@nestjs/common';
+import mongoose from 'mongoose';
+import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO, UpdateQuizzInCourseDTO } from 'src/dto/course.dto';
+import { CoursesRepository } from './course.repository';
 
 @Injectable()
 export class CourseService {
@@ -29,16 +30,44 @@ export class CourseService {
   }
 
   async update(user: User, id: string, data: UpdateCourseDTO): Promise<Course | null> {
-    const currentCourse = await this.courseRepository.findById(id);
-    if (currentCourse.author !== user._id) {
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
+    if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     return await this.courseRepository.update(id, { ...data });
   }
 
+  async updateQuizz(user: User, id: string, data: UpdateQuizzInCourseDTO): Promise<Course | null> {
+    const { option, quizz } = data;
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
+    if (currentCourse.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
+    const isQuizzExist = currentCourse.questions.includes(new mongoose.Types.ObjectId(quizz));
+    if ((option === 1 && isQuizzExist) || (option === 2 && !isQuizzExist)) {
+      throw new BadRequestException(isQuizzExist ? 'quizz-existed' : 'quizz-not-existed');
+    }
+    const updateOperation = option === 1 ? { $push: { quizzs: quizz } } : { $pull: { quizzs: quizz } };
+    return await this.courseRepository.update(id, updateOperation);
+  }
+
+  async updateChapter(user: User, id: string, data: UpdateChapterInCourseDTO): Promise<Course | null> {
+    const { option, chapter } = data;
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
+    if (currentCourse.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
+    const isChapterExist = currentCourse.chapters.includes(new mongoose.Types.ObjectId(chapter));
+    if ((option === 1 && isChapterExist) || (option === 2 && !isChapterExist)) {
+      throw new BadRequestException(isChapterExist ? 'chapter-existed' : 'chapter-not-existed');
+    }
+    const updateOperation = option === 1 ? { $push: { chapters: chapter } } : { $pull: { chapters: chapter } };
+    return await this.courseRepository.update(id, updateOperation);
+  }
+
   async delete(user: User, id: string): Promise<Course | null> {
     const currentCourse = await this.courseRepository.findById(id);
-    if (currentCourse.author !== user._id) {
+    if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     return await this.courseRepository.softDelete(id);

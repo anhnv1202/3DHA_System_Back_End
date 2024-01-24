@@ -1,17 +1,17 @@
-import { Auth } from '@common/decorators/auth.decorator';
-import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
-import { ApiTags, ApiBearerAuth, ApiBody, ApiQuery, ApiParam } from '@nestjs/swagger';
-import { ChapterService } from './chapter.service';
 import { ResponseType, Roles } from '@common/constants/global.const';
-import { Chapter } from '@models/chapter.model';
 import { ApiNormalResponse } from '@common/decorators/api-response';
-import { ChapterDTO, ChapterQueryDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
-import { Public } from '@common/decorators/common.decorator';
 import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
+import { Auth } from '@common/decorators/auth.decorator';
+import { Public } from '@common/decorators/common.decorator';
+import { Profile } from '@common/decorators/user.decorator';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { GetPagination } from '@common/interfaces/pagination-request';
-import { Profile } from '@common/decorators/user.decorator';
+import { Chapter } from '@models/chapter.model';
 import { User } from '@models/user.model';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ChapterDTO, ChapterQueryDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
+import { ChapterService } from './chapter.service';
 
 @Controller('chapter')
 @ApiTags('chapter')
