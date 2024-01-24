@@ -9,5 +9,20 @@
   "crUser": "Not found user",
   "validation-old-password-equal": "new password is equal to old password",
   "auth-password-not-correct": "password is incorrect",
-  "permission-denied": "Permission denied"
+  "permission-denied": "Permission denied",
+  "cannot-find-outcomeList": "Cannot find OutcomeList",
+  "update-outcomeList-error": "Update OutcomeList error",
+  "update-quizz-error": "Update Quizz error",
+  "cannot-find-quizz": "Cannot find Quizz",
+  "quizz-existed": "Quizz exists",
+  "quizz-not-existed": "Quizz do not exists",
+  "cannot-find-question": "Cannot find Question",
+  "question-existed": "Question exists",
+  "question-not-existed": "question do not exists",
+  "cannot-find-course": "Cannot find Course",
+  "course-existed": "Course exists",
+  "course-not-existed": "Course do not exists",
+  "cannot-find-chapter": "Cannot find Chapter",
+  "chapter-existed": "Chapter exists",
+  "chapter-not-existed": "Chapter do not exists"
 }

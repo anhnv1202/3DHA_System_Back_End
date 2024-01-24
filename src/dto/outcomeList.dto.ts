@@ -1,14 +1,12 @@
 import { Question } from '@common/interfaces/outcomeList';
-import { IsNotEmpty, IsString, IsArray, IsObject } from '@common/validator';
-
+import { IsNotEmpty, IsArray, IsObject, IsMongoId } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Types } from 'mongoose';
 
 export class OutcomeListDTO {
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
-  quizzId: Types.ObjectId;
+  quizzId: string;
 
   @ApiProperty()
   @IsArray()

@@ -1,4 +1,4 @@
-import { DEFAULT_THUMB_COURSE, Level } from '@common/constants/global.const';
+import { DEFAULT_THUMB_COURSE } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
@@ -26,10 +26,6 @@ export class Course extends Document {
   @ApiProperty()
   @Prop({ required: true })
   price: number;
-
-  @ApiProperty()
-  @Prop({ required: true })
-  level: Level;
 
   @ApiProperty()
   @Prop({ default: DEFAULT_THUMB_COURSE })

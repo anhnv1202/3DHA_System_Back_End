@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsNumber, IsString } from '@common/validator';
+import { IsNotEmpty, IsNumber, IsMongoId } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class OutcomeDTO {
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   quizzId: string;
 
@@ -15,7 +15,7 @@ export class OutcomeDTO {
 
 export class SubmitDTO {
   @ApiProperty()
-  @IsString()
+  @IsMongoId()
   @IsNotEmpty()
   quizzId: string;
 
