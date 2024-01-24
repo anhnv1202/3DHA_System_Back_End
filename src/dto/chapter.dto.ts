@@ -1,6 +1,7 @@
 import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Option } from '@common/constants/global.const';
+import { PaginationDTO } from './common.dto';
 
 export class ChapterDTO {
   @ApiProperty()
@@ -24,15 +25,15 @@ export class ChapterQueryDTO {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  name?: string;
+  title?: string;
 }
 
-export class UpdateChapterDTO {
+export class UpdateChapterDTO extends PaginationDTO{
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  name?: string;
+  title?: string;
 
   @ApiProperty()
   @IsString()
