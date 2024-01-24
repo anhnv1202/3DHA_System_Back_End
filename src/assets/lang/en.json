@@ -10,6 +10,7 @@
   "validation-old-password-equal": "new password is equal to old password",
   "auth-password-not-correct": "password is incorrect",
   "permission-denied": "Permission denied",
+  "cannot-login-by-google": "Login by Google fail",
   "cannot-find-outcomeList": "Cannot find OutcomeList",
   "update-outcomeList-error": "Update OutcomeList error",
   "update-quizz-error": "Update Quizz error",
@@ -25,4 +26,5 @@
   "cannot-find-chapter": "Cannot find Chapter",
   "chapter-existed": "Chapter exists",
   "chapter-not-existed": "Chapter do not exists"
+>>>>>>>>> Temporary merge branch 2
 }

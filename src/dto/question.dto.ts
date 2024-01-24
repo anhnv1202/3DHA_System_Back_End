@@ -1,6 +1,7 @@
 import { Answer } from '@common/constants/global.const';
 import { IsEnum, IsNotEmpty, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { PaginationDTO } from './common.dto';
 
 export class QuestionDTO {
   @ApiProperty()
@@ -34,7 +35,7 @@ export class QuestionDTO {
   outcome: Answer;
 }
 
-export class QuestionQueryDTO {
+export class QuestionQueryDTO extends PaginationDTO{
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
