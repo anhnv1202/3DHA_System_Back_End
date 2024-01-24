@@ -25,7 +25,7 @@ export class User extends Document {
   name: string;
 
   @ApiProperty()
-  @Prop({ required: true, unique: true })
+  @Prop({ required: false, unique: true })
   phone: string;
 
   @ApiProperty()

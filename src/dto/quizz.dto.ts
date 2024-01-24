@@ -1,6 +1,6 @@
+import { Option } from '@common/constants/global.const';
 import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { Option } from '@common/constants/global.const';
 import { PaginationDTO } from './common.dto';
 
 export class QuizzDTO {
@@ -12,10 +12,10 @@ export class QuizzDTO {
   @ApiProperty()
   @IsMongoId()
   @IsNotEmpty()
-  course: string;
+  chapter: string;
 }
 
-export class QuizzQueryDTO extends PaginationDTO{
+export class QuizzQueryDTO extends PaginationDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
@@ -34,7 +34,7 @@ export class UpdateQuizzDTO {
   @IsMongoId()
   @IsNotEmpty()
   @IsOptional()
-  course?: string;
+  chapter?: string;
 }
 
 export class UpdateQuestionInQuizzDTO {

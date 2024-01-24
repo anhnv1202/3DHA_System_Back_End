@@ -1,18 +1,18 @@
-import { UpdateChapterInCourseDTO } from './../../dto/course.dto';
-import { Body, Controller, Post, Get, Param, Put, Delete } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiTags, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { CourseService } from './course.service';
-import { Auth } from '@common/decorators/auth.decorator';
-import { ApiNormalResponse } from '@common/decorators/api-response';
 import { ResponseType, Roles } from '@common/constants/global.const';
+import { ApiNormalResponse } from '@common/decorators/api-response';
+import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
+import { Auth } from '@common/decorators/auth.decorator';
+import { Public } from '@common/decorators/common.decorator';
+import { Profile } from '@common/decorators/user.decorator';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { GetPagination } from '@common/interfaces/pagination-request';
-import { Public } from '@common/decorators/common.decorator';
-import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
-import { CourseDTO, UpdateCourseDTO, CourseQueryDTO, UpdateQuizzInCourseDTO } from 'src/dto/course.dto';
 import { Course } from '@models/course.models';
-import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { CourseDTO, CourseQueryDTO, UpdateCourseDTO } from 'src/dto/course.dto';
+import { UpdateChapterInCourseDTO } from './../../dto/course.dto';
+import { CourseService } from './course.service';
 
 @Controller('course')
 @ApiTags('course')
@@ -52,16 +52,6 @@ export class CourseController {
   @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
   updateCourse(@Body() body: UpdateCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
     return this.courseService.update(user, params.id, body);
-  }
-
-  @Put('update-quizz/:id')
-  @ApiBearerAuth()
-  @Auth([Roles.TEACHER])
-  @ApiParam({ name: 'id', type: String, required: true })
-  @ApiBody({ type: UpdateQuizzInCourseDTO })
-  @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
-  updateQuizzInCourse(@Body() body: UpdateQuizzInCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
-    return this.courseService.updateQuizz(user, params.id, body);
   }
 
   @Put('update-chapter/:id')

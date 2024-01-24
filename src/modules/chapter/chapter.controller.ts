@@ -10,7 +10,7 @@ import { Chapter } from '@models/chapter.model';
 import { User } from '@models/user.model';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { ChapterDTO, ChapterQueryDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
+import { ChapterDTO, ChapterQueryDTO, UpdateChapterDTO, UpdateQuizzInChapterDTO } from 'src/dto/chapter.dto';
 import { ChapterService } from './chapter.service';
 
 @Controller('chapter')
@@ -51,6 +51,16 @@ export class ChapterController {
   @ApiNormalResponse({ model: Chapter, type: ResponseType.Ok })
   updateChapter(@Body() body: UpdateChapterDTO, @Param() params: { id: string }, @Profile() user: User) {
     return this.chapterService.update(user, params.id, body);
+  }
+
+  @Put('update-quizz/:id')
+  @ApiBearerAuth()
+  @Auth([Roles.TEACHER])
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiBody({ type: UpdateQuizzInChapterDTO })
+  @ApiNormalResponse({ model: Chapter, type: ResponseType.Ok })
+  updateQuizzInCourse(@Body() body: UpdateQuizzInChapterDTO, @Param() params: { id: string }, @Profile() user: User) {
+    return this.chapterService.updateQuizz(user, params.id, body);
   }
 
   @Delete('delete/:id')
