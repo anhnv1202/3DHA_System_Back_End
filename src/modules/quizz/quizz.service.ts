@@ -37,7 +37,7 @@ export class QuizzService {
     session.startTransaction();
     try {
       const quizz = await this.quizzRepository.create(data);
-      await this.courseRepository.update(data.course, { $push: { quizzs: quizz } });
+      await this.courseRepository.update(data.chapter, { $push: { quizzs: quizz } });
       await session.commitTransaction();
       return quizz;
     } catch (e) {
@@ -50,7 +50,7 @@ export class QuizzService {
 
   async update(user: User, id: string, data: UpdateQuizzDTO): Promise<Quizz | null> {
     const currentQuizz = (await this.quizzRepository.findById(id, authorFromCoursePopulate)).toObject();
-    if (currentQuizz.course.author._id.toString() !== user._id) {
+    if (currentQuizz.chapter.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     return await this.quizzRepository.update(id, { ...data });
@@ -59,7 +59,7 @@ export class QuizzService {
   async updateQuestion(user: User, id: string, data: UpdateQuestionInQuizzDTO): Promise<Quizz | null> {
     const { option, question } = data;
     const currentQuizz = (await this.quizzRepository.findById(id, authorFromCoursePopulate)).toObject();
-    if (currentQuizz.course.author._id.toString() !== user._id) {
+    if (currentQuizz.chapter.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     const isQuestionExist = currentQuizz.questions.includes(new mongoose.Types.ObjectId(question));
@@ -72,7 +72,7 @@ export class QuizzService {
 
   async delete(user: User, id: string): Promise<Quizz | null> {
     const currentQuizz = (await this.quizzRepository.findById(id, authorFromCoursePopulate)).toObject();
-    if (currentQuizz.course.author._id.toString() !== user._id) {
+    if (currentQuizz.chapter.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
     return await this.quizzRepository.softDelete(id);

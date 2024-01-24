@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
+import { Chapter } from './chapter.model';
 import { Question } from './question.model';
-import { Course } from './course.models';
 
 @Schema({ timestamps: true })
 export class Quizz extends Document {
@@ -15,8 +15,8 @@ export class Quizz extends Document {
   questions: PopulatedDoc<Question, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Course' })
-  course: PopulatedDoc<Course, Types.ObjectId>;
+  @Prop({ type: SchemaTypes.ObjectId, ref: 'Chapter' })
+  chapter: PopulatedDoc<Chapter, Types.ObjectId>;
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'OutcomeList', required: true, default: [] })

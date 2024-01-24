@@ -2,12 +2,11 @@ import { DEFAULT_THUMB_COURSE } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
-import { Major } from './major.models';
-import { User } from './user.model';
-import { Quizz } from './quizz.model';
 import { Chapter } from './chapter.model';
 import { Discount } from './discount.model';
+import { Major } from './major.models';
 import { Rating } from './rating.model';
+import { User } from './user.model';
 
 @Schema({ timestamps: true })
 export class Course extends Document {
@@ -34,10 +33,6 @@ export class Course extends Document {
   @ApiProperty()
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
   author: PopulatedDoc<User, Types.ObjectId>;
-
-  @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Quizz', required: false, default: [] })
-  quizzs: PopulatedDoc<Quizz, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'Chapter', default: [] })

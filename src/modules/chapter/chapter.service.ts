@@ -6,8 +6,8 @@ import { User } from '@models/user.model';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
-import { Connection } from 'mongoose';
-import { ChapterDTO, UpdateChapterDTO } from 'src/dto/chapter.dto';
+import mongoose, { Connection } from 'mongoose';
+import { ChapterDTO, UpdateChapterDTO, UpdateQuizzInChapterDTO } from 'src/dto/chapter.dto';
 import { ChaptersRepository } from './chapter.respository';
 
 @Injectable()
@@ -54,6 +54,20 @@ export class ChapterService {
       throw new BadRequestException('permission-denied');
     }
     return await this.chapterRepository.update(id, { ...data });
+  }
+
+  async updateQuizz(user: User, id: string, data: UpdateQuizzInChapterDTO): Promise<Chapter | null> {
+    const { option, quizz } = data;
+    const currentChapter = (await this.chapterRepository.findById(id, authorFromCoursePopulate)).toObject();
+    if (currentChapter.course.author._id.toString() !== user._id) {
+      throw new BadRequestException('permission-denied');
+    }
+    const isQuizzExist = currentChapter.questions.includes(new mongoose.Types.ObjectId(quizz));
+    if ((option === 1 && isQuizzExist) || (option === 2 && !isQuizzExist)) {
+      throw new BadRequestException(isQuizzExist ? 'quizz-existed' : 'quizz-not-existed');
+    }
+    const updateOperation = option === 1 ? { $push: { quizzs: quizz } } : { $pull: { quizzs: quizz } };
+    return await this.chapterRepository.update(id, updateOperation);
   }
 
   // async updateLesson(user: User, id: string, data: UpdateLessonInChapterDTO): Promise<Chapter | null> {
