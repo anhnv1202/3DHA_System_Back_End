@@ -24,6 +24,8 @@ import { OutcomeModule } from './modules/outcome/outcome.module';
 import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
 import { ChapterModule } from './modules/chapter/chapter.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
+import { CouponModule } from './modules/coupon/coupon.module';
+import { DiscountModule } from './modules/discount/discount.module';
 
 @Module({
   imports: [
@@ -78,6 +80,8 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
     OutcomeListModule,
     ChapterModule,
     WishlistModule,
+    CouponModule,
+    DiscountModule,
   ],
   controllers: [],
   providers: [],

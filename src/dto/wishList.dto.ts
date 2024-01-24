@@ -1,8 +1,8 @@
-import { IsNotEmpty, IsNumber, IsMongoId } from '@common/validator';
-import { ApiProperty } from '@nestjs/swagger';
 import { Option } from '@common/constants/global.const';
+import { IsMongoId, IsNotEmpty, IsNumber } from '@common/validator';
+import { ApiProperty } from '@nestjs/swagger';
 
-export class WishListDTO {
+export class WishlistDTO {
   @ApiProperty()
   @IsNumber()
   @IsNotEmpty()

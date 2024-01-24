@@ -45,7 +45,7 @@ export class User extends Document {
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
-  wishList: PopulatedDoc<Course, Types.ObjectId>[];
+  wishlist: PopulatedDoc<Course, Types.ObjectId>[];
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })

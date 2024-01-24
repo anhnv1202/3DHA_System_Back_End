@@ -13,6 +13,7 @@ import {
   IsString as _IsString,
   Matches as _Matches,
   IsMongoId as _IsMongoId,
+  IsDate as _IsDate,
 } from 'class-validator';
 import { VALIDATE_MESSAGE } from './message-validate';
 
@@ -63,3 +64,6 @@ export const IsObject = (validationOptions?: ValidationOptions) =>
 
 export const IsMongoId = (validationOptions?: ValidationOptions) =>
   _IsMongoId({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
+
+  export const IsDate = (validationOptions?: ValidationOptions) =>
+  _IsDate({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });

@@ -39,7 +39,7 @@ export class Course extends Document {
   chapters: PopulatedDoc<Chapter, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop()
+  @Prop({ default: 0 })
   sold: number;
 
   @ApiProperty()
