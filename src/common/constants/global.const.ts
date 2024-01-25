@@ -133,4 +133,5 @@ export const SEARCH_BY = {
   CHAPTER: ['title'],
   COUPON: ['name', 'promotion', 'limit', 'expired'],
   DISCOUNT: ['promotion', 'limit', 'expired', 'course'],
+  ENROLLMENT: ['orderBy', 'coupon', 'totalPrice', 'course', 'status'],
 };

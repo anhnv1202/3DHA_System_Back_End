@@ -38,4 +38,6 @@ export const chapterPopulate = [
 
 export const discountPopulate = [{ path: 'course', select: 'name' }];
 
+export const enrollmentPopulate = [{ path: 'courseList', select: 'orderBy' }];
+
 export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];

@@ -1,4 +1,4 @@
-import { IsMongoId, IsNotEmpty } from '@common/validator';
+import { IsMongoId, IsNotEmpty, IsNumber } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { PaginationDTO } from './common.dto';
 
@@ -24,4 +24,11 @@ export class EnrollmentQueryDTO extends PaginationDTO {
   @IsMongoId()
   @IsNotEmpty()
   coupon?: string;
+}
+
+export class UpdateEnrollmentDTO {
+  @ApiProperty()
+  @IsNumber()
+  @IsNotEmpty()
+  status?: number;
 }

@@ -5,6 +5,10 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 // import { EnrollmentDTO } from 'src/dto/enrollment.dto';
+import { SEARCH_BY } from '@common/constants/global.const';
+import { enrollmentPopulate } from '@common/constants/populate.const';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { Enrollment } from '@models/enrollment.model';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { DiscountsRepository } from '@modules/discount/discount.repository';
 import { EnrollmentsRepository } from './enrollment.repository';
@@ -21,11 +25,16 @@ export class EnrollmentService {
     private readonly connection: Connection,
   ) {}
 
-  async getAll(user: User) {
-    return (await this.userRepository.findById(user._id, [{ path: 'wishlist', select: 'name' }])).wishlist;
+  async getAll(pagination: Pagination): Promise<PaginationResult<Enrollment>> {
+    const [data, total] = await this.enrollmentsRepository.paginate({
+      pagination,
+      searchBy: SEARCH_BY.ENROLLMENT,
+      populates: enrollmentPopulate,
+    });
+    return { data, total };
   }
 
-  async update(user: User, data) {
+  async create(user: User, data) {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
@@ -91,5 +100,14 @@ export class EnrollmentService {
     } finally {
       await session.endSession();
     }
+  }
+
+  async update(user: User, id: string, data): Promise<User | null> {
+    const currentEnrollment = await this.enrollmentsRepository.update(id, { status: data.status });
+    const update =
+      data.status === 2
+        ? await this.userRepository.update(user._id, { enroll: currentEnrollment.courseList })
+        : await this.userRepository.findById(user._id);
+    return update;
   }
 }
