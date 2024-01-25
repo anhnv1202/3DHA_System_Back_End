@@ -4,7 +4,7 @@ import { Profile } from '@common/decorators/user.decorator';
 import { User } from '@models/user.model';
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
-import { WishlistDTO } from 'src/dto/wishList.dto';
+import { WishlistDTO } from 'src/dto/wishlist.dto';
 import { WishlistService } from './wishlist.service';
 
 @Controller('wishlist')
