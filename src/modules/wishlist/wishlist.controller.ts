@@ -1,11 +1,11 @@
+import { ResponseType } from '@common/constants/global.const';
+import { ApiNormalResponse } from '@common/decorators/api-response';
+import { Profile } from '@common/decorators/user.decorator';
+import { User } from '@models/user.model';
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
+import { WishlistDTO } from '../../dto/wishList.dto';
 import { WishlistService } from './wishlist.service';
-import { ApiNormalResponse } from '@common/decorators/api-response';
-import { User } from '@models/user.model';
-import { ResponseType } from '@common/constants/global.const';
-import { Profile } from '@common/decorators/user.decorator';
-import { WishListDTO } from 'src/dto/wishList.dto';
 
 @Controller('wishlist')
 @ApiTags('wishlist')
@@ -20,9 +20,9 @@ export class WishlistController {
 
   @Put('update')
   @ApiBearerAuth()
-  @ApiBody({ type: WishListDTO })
+  @ApiBody({ type: WishlistDTO })
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
-  updateWishlist(@Body() body: WishListDTO, @Profile() user: User) {
+  updateWishlist(@Body() body: WishlistDTO, @Profile() user: User) {
     return this.wishlistService.update(user, body);
   }
 }

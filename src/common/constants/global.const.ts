@@ -125,4 +125,6 @@ export const SEARCH_BY = {
   QUIZZ: ['name'],
   OUTCOME_LIST: ['user'],
   CHAPTER: ['title'],
+  COUPON: ['name', 'promotion', 'limit', 'expired'],
+  DISCOUNT: ['promotion', 'limit', 'expired', 'course'],
 };

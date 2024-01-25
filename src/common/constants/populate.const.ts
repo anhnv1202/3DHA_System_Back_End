@@ -1,6 +1,6 @@
 export const userPopulate = [
   // { path: 'courseList', select: 'name' },
-  // { path: 'wishList', select: 'name' },
+  // { path: 'wishlist', select: 'name' },
   { path: 'major', select: 'title' },
 ];
 
@@ -35,5 +35,7 @@ export const chapterPopulate = [
   // { path: 'lessons', select: '-outcome' },
   { path: 'course', select: 'name' },
 ];
+
+export const discountPopulate = [{ path: 'course', select: 'name' }];
 
 export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];
