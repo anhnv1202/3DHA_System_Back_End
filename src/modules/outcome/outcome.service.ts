@@ -1,15 +1,15 @@
-import { Question } from '@models/question.model';
-import { QuizzsRepository } from '@modules/quizz/quizz.repository';
-import { OutcomeDTO } from 'src/dto/outcome.dto';
-import { QuestionsRepository } from '@modules/question/question.repository';
-import { User } from '@models/user.model';
-import { OutcomesRepository } from './outcome.repository';
-import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { OutcomeListsRepository } from '@modules/outcome-list/outcome-list.repository';
-import { Connection } from 'mongoose';
-import { InjectConnection } from '@nestjs/mongoose';
-import { OutcomeListDTO } from 'src/dto/outcomeList.dto';
 import { outcomeListPopulate } from '@common/constants/populate.const';
+import { Question } from '@models/question.model';
+import { User } from '@models/user.model';
+import { OutcomeListsRepository } from '@modules/outcome-list/outcome-list.repository';
+import { QuestionsRepository } from '@modules/question/question.repository';
+import { QuizzsRepository } from '@modules/quizz/quizz.repository';
+import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { InjectConnection } from '@nestjs/mongoose';
+import { Connection } from 'mongoose';
+import { OutcomeDTO } from 'src/dto/outcome.dto';
+import { OutcomeListDTO } from 'src/dto/outcomeList.dto';
+import { OutcomesRepository } from './outcome.repository';
 
 @Injectable()
 export class OutcomeService {
@@ -36,7 +36,7 @@ export class OutcomeService {
       ).toObject();
       if (!quizz) throw new BadRequestException('cannot-find-quizz');
 
-      // if (!user.courseList.includes(quizz.course)) {
+      // if (!user.enroll.includes(quizz.course)) {
       //   throw new BadRequestException('permission-denied');
       // }
       const userExistsInOutcomeList = quizz.outcomeList.some((element) => element.user._id === user._id);

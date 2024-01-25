@@ -8,24 +8,25 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { join } from 'path';
 
 import { CronJobModule } from '@modules/cron-job/cron-job.module';
+import { EnrollmentModule } from '@modules/enrollment/enrollment.module';
 import { MailModule } from '@modules/mail/mail.module';
 import { BullModule } from '@nestjs/bull';
 import { MongooseConfigService } from './config/mongo-config.service';
 import { ThrottlerConfigService } from './config/throttler-config.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { ChapterModule } from './modules/chapter/chapter.module';
 import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
-import { TokenModule } from './modules/token/token.module';
-import { UserModule } from './modules/user/user.module';
-import { MajorModule } from './modules/major/major.module';
+import { CouponModule } from './modules/coupon/coupon.module';
 import { CourseModule } from './modules/course/course.module';
+import { DiscountModule } from './modules/discount/discount.module';
+import { MajorModule } from './modules/major/major.module';
+import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
+import { OutcomeModule } from './modules/outcome/outcome.module';
 import { QuestionModule } from './modules/question/question.module';
 import { QuizzModule } from './modules/quizz/quizz.module';
-import { OutcomeModule } from './modules/outcome/outcome.module';
-import { OutcomeListModule } from './modules/outcome-list/outcome-list.module';
-import { ChapterModule } from './modules/chapter/chapter.module';
+import { TokenModule } from './modules/token/token.module';
+import { UserModule } from './modules/user/user.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
-import { CouponModule } from './modules/coupon/coupon.module';
-import { DiscountModule } from './modules/discount/discount.module';
 
 @Module({
   imports: [
@@ -82,6 +83,7 @@ import { DiscountModule } from './modules/discount/discount.module';
     WishlistModule,
     CouponModule,
     DiscountModule,
+    EnrollmentModule,
   ],
   controllers: [],
   providers: [],

@@ -1,5 +1,5 @@
 export const userPopulate = [
-  // { path: 'courseList', select: 'name' },
+  // { path: 'enroll', select: 'name' },
   // { path: 'wishlist', select: 'name' },
   { path: 'major', select: 'title' },
 ];

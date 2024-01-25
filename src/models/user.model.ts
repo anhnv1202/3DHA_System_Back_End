@@ -49,7 +49,7 @@ export class User extends Document {
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
-  courseList: PopulatedDoc<Course, Types.ObjectId>[];
+  enroll: PopulatedDoc<Course, Types.ObjectId>[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

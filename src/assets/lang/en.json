@@ -7,8 +7,8 @@
   "token-expired": "Token expired",
   "access-denied": "Access denied, your account is not authorized",
   "crUser": "Not found user",
-  "validation-old-password-equal": "new password is equal to old password",
-  "auth-password-not-correct": "password is incorrect",
+  "validation-old-password-equal": "New password is equal to Old password",
+  "auth-password-not-correct": "Password is incorrect",
   "permission-denied": "Permission denied",
   "cannot-login-by-google": "Login by Google fail",
   "cannot-find-outcomeList": "Cannot find OutcomeList",
@@ -19,11 +19,15 @@
   "quizz-not-existed": "Quizz do not exists",
   "cannot-find-question": "Cannot find Question",
   "question-existed": "Question exists",
-  "question-not-existed": "question do not exists",
+  "question-not-existed": "Question do not exists",
   "cannot-find-course": "Cannot find Course",
   "course-existed": "Course exists",
   "course-not-existed": "Course do not exists",
   "cannot-find-chapter": "Cannot find Chapter",
   "chapter-existed": "Chapter exists",
-  "chapter-not-existed": "Chapter do not exists"
+  "chapter-not-existed": "Chapter do not exists",
+  "discount-expired": "Discount expired",
+  "coupon-expired": "Coupon expired",
+  "coupon-not-existed": "Coupon do not exists",
+  "wishlist-empty": "Wishlist is empty"
 }

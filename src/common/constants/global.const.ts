@@ -49,6 +49,12 @@ export enum Roles {
   ADMIN = 3,
 }
 
+export enum Payment {
+  PROCESSING = 1,
+  SUCCESSFUL = 2,
+  CANCELED = 3,
+}
+
 export enum Answer {
   A = 'A',
   B = 'B',
