@@ -4,7 +4,7 @@ import { UsersRepository } from '@modules/user/user.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Connection } from 'mongoose';
-import { WishlistDTO } from 'src/dto/wishlist.dto';
+import { WishlistDTO } from '../../dto/wishList.dto';
 
 @Injectable()
 export class WishlistService {
