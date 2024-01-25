@@ -99,7 +99,7 @@ export const REGEX = {
 };
 
 export const CLOUDINARY_PRODUCT_IMG = 'product-image';
-export const CLOUDINARY_USER_AVATAR_IMG = 'user-avatar-image';
+export const GOOGLE_DRIVE_USER_AVATAR_IMG = '1D-xhh4WFDdYzO1JNcwiShKPMM66ATh1X';
 
 export const DEFAULT_AVATAR = 'https://res.cloudinary.com/dzq6nfkra/image/upload/v1704822124/avatar/defaut-avatar.jpg';
 export const DEFAULT_THUMB_COURSE =

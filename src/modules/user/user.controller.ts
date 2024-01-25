@@ -1,3 +1,4 @@
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ResponseType, Roles } from '@common/constants/global.const';
 import { ApiNormalResponse } from '@common/decorators/api-response';
 import { ApiPaginationResponse } from '@common/decorators/api-response/api-pagination-response.decorator';
@@ -7,8 +8,8 @@ import { GetPagination } from '@common/interfaces/pagination-request';
 import { ExcludePasswordInterceptor } from '@interceptors/exclude-password.interceptor';
 import { PaginationInterceptor } from '@interceptors/pagination.interceptor';
 import { User } from '@models/user.model';
-import { Body, Controller, Get, Param, Post, Put, UseInterceptors } from '@nestjs/common';
-import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, Param, Post, Put, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ChangeActiveDTO } from 'src/dto/common.dto';
 import { ChangeRoleUserDTO, UpdateUserDTO, UserQueryDTO } from 'src/dto/user.dto';
 import { UserService } from './user.service';
@@ -64,5 +65,15 @@ export class UserController {
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
   updateUser(@Body() body: UpdateUserDTO, @Param() params: { id: string }) {
     return this.userService.update(body, params.id);
+  }
+
+  @Put('update-avatar/:id')
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(ExcludePasswordInterceptor, FileInterceptor('avatar'))
+  @ApiNormalResponse({ model: User, type: ResponseType.Ok })
+  updateUserAvatar(@UploadedFile() avatar: Express.Multer.File, @Param() params: { id: string }) {
+    return this.userService.updateAvatar(avatar, params.id);
   }
 }

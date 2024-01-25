@@ -40,12 +40,6 @@ export class UpdateUserDTO {
   @IsString()
   @IsNotEmpty()
   @IsOptional()
-  avatar?: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  @IsOptional()
   bio?: string;
 }
 

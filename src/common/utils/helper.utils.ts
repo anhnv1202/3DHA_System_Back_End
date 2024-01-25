@@ -60,6 +60,11 @@ export function getPagination(request: { query: unknown }): Pagination {
   return paginationParams;
 }
 
+export function getFileId(fileUrl: string): string {
+  const parsedUrl = new URL(fileUrl);
+  return parsedUrl.searchParams.get('id');
+}
+
 export const isNullOrUndefined = (value: any): boolean => value === null || value === undefined || value === '';
 
 export const isStrEmpty = (value: any): boolean => isNullOrUndefined(value) || value.trim() === '';
