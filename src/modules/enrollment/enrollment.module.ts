@@ -15,7 +15,7 @@ import { DiscountModule } from '@modules/discount/discount.module';
     CourseModule,
     UserModule,
     CouponModule,
-    DiscountModule
+    DiscountModule,
   ],
   controllers: [EnrollmentController],
   providers: [EnrollmentsRepository, EnrollmentService],

@@ -14,7 +14,7 @@ export class MajorDTO {
   description: string;
 }
 
-export class MajorQueryDTO extends PaginationDTO{
+export class MajorQueryDTO extends PaginationDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()

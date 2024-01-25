@@ -50,12 +50,14 @@ export class EnrollmentService {
       }
       let totalCoursePrice = wishlist.reduce((sum, course) => {
         if (course.discount) {
-          if (course.discount.limit <= 0 || new Date(course.discount.expired) > new Date()) {
+          if (course.discount.limit <= 0 || new Date(course.discount.expired) < new Date()) {
             throw new BadRequestException('discount-expired');
           }
-          this.discountsRepository.update(course.discount._id, {
-            limit: (course.discount.limit -= 1),
-          });
+          if (course.discount.limit) {
+            this.discountsRepository.update(course.discount._id, {
+              limit: (course.discount.limit -= 1),
+            });
+          }
           this.courseRepository.update(course._id, {
             sold: (course.sold += 1),
           });
@@ -74,13 +76,15 @@ export class EnrollmentService {
         if (!currentCoupon) {
           throw new BadRequestException('coupon-not-existed');
         }
-        if (currentCoupon.limit <= 0 || new Date(currentCoupon.expired) > new Date()) {
+        if (currentCoupon.limit <= 0 || new Date(currentCoupon.expired) < new Date()) {
           throw new BadRequestException('coupon-expired');
         }
         totalCoursePrice = totalCoursePrice * (1 - currentCoupon.promotion / 100);
-        this.couponsRepository.update(data.coupon, {
-          limit: (currentCoupon.limit -= 1),
-        });
+        if (currentCoupon.limit) {
+          this.couponsRepository.update(data.coupon, {
+            limit: (currentCoupon.limit -= 1),
+          });
+        }
       }
       await this.userRepository.update(user._id, { wishlist: [] });
       await session.commitTransaction();

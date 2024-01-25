@@ -35,7 +35,7 @@ export class QuestionDTO {
   outcome: Answer;
 }
 
-export class QuestionQueryDTO extends PaginationDTO{
+export class QuestionQueryDTO extends PaginationDTO {
   @ApiProperty()
   @IsString()
   @IsNotEmpty()
