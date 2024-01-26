@@ -1,17 +1,3 @@
-// import { Pagination, PaginationResult } from '#common/interfaces/filter.interface';
-// import { ItemNotFoundMessage, findAndCount } from '#common/utils/helper.utils';
-// import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { CreateMultiUserDTO, UserDTO } from 'src/dto/user.dto';
-// import { ChangeActiveCorporation, ChangeStatus } from 'src/dto/index.dto';
-// import {
-//   ACCOUNT_STATUS_CODE,
-//   SOURCE_STATUS_VALID,
-//   Roles,
-//   SEARCH_BY,
-//   ACCOUNT_STATUS_NAME,
-// } from '#common/constants/global.const';
-// import { BatchResult } from '#common/interfaces/index.interface';
 import { CLOUDINARY_USER_AVATAR_IMG, DEFAULT_AVATAR, Roles, SEARCH_BY } from '@common/constants/global.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { ItemNotFoundMessage } from '@common/utils/helper.utils';

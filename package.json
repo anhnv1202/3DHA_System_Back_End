@@ -60,6 +60,7 @@
     "mongoose": "^6.3.3",
     "multer": "^1.4.5-lts.1",
     "nest-csv-parser": "^2.0.4",
+    "nestjs-google-drive": "^0.0.1",
     "nodemailer": "^6.9.5",
     "papaparse": "^5.4.1",
     "passport": "^0.7.0",

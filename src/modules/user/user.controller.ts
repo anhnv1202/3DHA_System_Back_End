@@ -66,3 +66,13 @@ export class UserController {
     return this.userService.update(body, params.id);
   }
 }
+
+// @Put('update-avatar/:id')
+// @ApiBearerAuth()
+// @ApiParam({ name: 'id', type: String, required: true })
+// @ApiConsumes('multipart/form-data')
+// @UseInterceptors(ExcludePasswordInterceptor, FileInterceptor('avatar'))
+// @ApiNormalResponse({ model: User, type: ResponseType.Ok })
+// updateUserAvatar(@UploadedFile() avatar: Express.Multer.File, @Param() params: { id: string }) {
+//   return this.userService.updateAvatar(avatar, params.id);
+// }
