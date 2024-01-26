@@ -1,17 +1,16 @@
 import { ResponseType, Roles } from '@common/constants/global.const';
 import { ApiNormalResponse } from '@common/decorators/api-response';
+import { Auth } from '@common/decorators/auth.decorator';
 import { Profile } from '@common/decorators/user.decorator';
+import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { GetPagination } from '@common/interfaces/pagination-request';
 import { Enrollment } from '@models/enrollment.model';
 import { User } from '@models/user.model';
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { EnrollmentDTO, EnrollmentQueryDTO } from 'src/dto/enrollment.dto';
 import { ApiPaginationResponse } from './../../common/decorators/api-response/api-pagination-response.decorator';
 import { UpdateEnrollmentDTO } from './../../dto/enrollment.dto';
-// import { EnrollmentDTO } from 'src/dto/enrollment.dto';
-import { Auth } from '@common/decorators/auth.decorator';
-import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
-import { GetPagination } from '@common/interfaces/pagination-request';
-import { EnrollmentQueryDTO } from 'src/dto/enrollment.dto';
 import { EnrollmentService } from './enrollment.service';
 
 @Controller('enrollment')
@@ -39,7 +38,7 @@ export class EnrollmentController {
   @Post('create')
   @ApiBearerAuth()
   @ApiNormalResponse({ model: Enrollment, type: ResponseType.Ok })
-  createEnrollment(@Body() body, @Profile() user: User) {
+  createEnrollment(@Body() body: EnrollmentDTO | null, @Profile() user: User) {
     return this.enrollmentService.create(user, body);
   }
 

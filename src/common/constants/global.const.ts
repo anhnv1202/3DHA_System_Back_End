@@ -55,6 +55,12 @@ export enum Payment {
   CANCELED = 3,
 }
 
+export enum CourseStatus {
+  WISHLIST = 1,
+  LATER = 2,
+  ENROLL = 3,
+}
+
 export enum Answer {
   A = 'A',
   B = 'B',

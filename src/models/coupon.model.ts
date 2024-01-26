@@ -17,7 +17,7 @@ export class Coupon extends Document {
   expired: Date;
 
   @ApiProperty()
-  @Prop()
+  @Prop({ default: Number.MAX_SAFE_INTEGER })
   limit: number;
 
   @Prop({ type: Date, default: null })

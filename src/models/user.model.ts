@@ -1,11 +1,10 @@
 import { DEFAULT_AVATAR, Roles } from '@common/constants/global.const';
+import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
-import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
-import { Course } from './course.models';
-import { Enrollment } from './enrollment.model';
+import { Document, SchemaTypes } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -45,20 +44,17 @@ export class User extends Document {
   role: Roles;
 
   @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
-  wishlist: PopulatedDoc<Course, Types.ObjectId>[];
-
-  @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
-  laterList: PopulatedDoc<Course, Types.ObjectId>[];
-
-  @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Course', required: false, default: [] })
-  courseList: PopulatedDoc<Course, Types.ObjectId>[];
-
-  @ApiProperty()
-  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Enrollment', required: false, default: [] })
-  enrollment: PopulatedDoc<Enrollment, Types.ObjectId>[];
+  @Prop({
+    type: [
+      {
+        course: { type: SchemaTypes.ObjectId, ref: 'Course' },
+        status: { type: Number },
+      },
+    ],
+    ref: 'Course',
+    required: false,
+  })
+  courseInfo: CourseInfo[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

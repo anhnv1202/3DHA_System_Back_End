@@ -44,4 +44,4 @@ export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }]
 
 export const wishlistFromUserPopulate = [{ path: 'wishlist', populate: [{ path: 'discount', select: 'promotion' }] }];
 
-export const enrollmentFromUserPopulate = [{ path: 'enrollment' }];
+export const courseInfoFromUserPopulate = [{ path: 'courseInfo.course' }];
