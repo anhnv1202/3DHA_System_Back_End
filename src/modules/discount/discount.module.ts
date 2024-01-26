@@ -7,8 +7,8 @@ import { DiscountService } from './discount.service';
 import { CourseModule } from '@modules/course/course.module';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Discount.name, schema: DiscountSchema }]),CourseModule],
-  controllers: [ DiscountController],
+  imports: [MongooseModule.forFeature([{ name: Discount.name, schema: DiscountSchema }]), CourseModule],
+  controllers: [DiscountController],
   providers: [DiscountsRepository, DiscountService],
   exports: [DiscountsRepository, DiscountService],
 })

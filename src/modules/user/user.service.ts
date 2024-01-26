@@ -1,18 +1,18 @@
-import { DEFAULT_AVATAR, GOOGLE_DRIVE_USER_AVATAR_IMG, Roles, SEARCH_BY } from '@common/constants/global.const';
+import { CLOUDINARY_USER_AVATAR_IMG, DEFAULT_AVATAR, Roles, SEARCH_BY } from '@common/constants/global.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { ItemNotFoundMessage } from '@common/utils/helper.utils';
 import { User } from '@models/user.model';
+import { CloudinaryService } from '@modules/cloudinary/cloudinary.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { ChangeActiveDTO } from 'src/dto/common.dto';
 import { UpdateUserDTO } from 'src/dto/user.dto';
 import { UsersRepository } from './user.repository';
-import { FileService } from '@modules/file/file.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private userRepository: UsersRepository,
-    private fileService: FileService,
+    private cloudinaryService: CloudinaryService,
   ) {}
 
   async getAll(pagination: Pagination): Promise<PaginationResult<User>> {
@@ -62,23 +62,19 @@ export class UserService {
   async update(data: UpdateUserDTO, id: string): Promise<User | null> {
     const existUser = await this.getOne(id);
     if (!existUser) throw new BadRequestException(ItemNotFoundMessage('User'));
-    const { lastName, firstName } = data;
+    const { avatar, lastName, firstName } = data;
+    let image = existUser.avatar;
+    if (avatar && avatar !== existUser.avatar) {
+      if (DEFAULT_AVATAR !== existUser.avatar && existUser.avatar)
+        await this.cloudinaryService.deleteFile(existUser.avatar, CLOUDINARY_USER_AVATAR_IMG);
+
+      image = (await this.cloudinaryService.uploadImage(avatar, CLOUDINARY_USER_AVATAR_IMG)).imageUrl;
+    }
 
     return await this.updateOneBy(id, {
       ...data,
-      ...(lastName && firstName && { name: `${lastName} ${firstName}`.trim() }),
-    });
-  }
-
-  async updateAvatar(avatar: Express.Multer.File, id: string): Promise<User | null> {
-    const existUser = await this.getOne(id);
-
-    if (!existUser) throw new BadRequestException(ItemNotFoundMessage('User'));
-    if (DEFAULT_AVATAR !== existUser.avatar && existUser.avatar)
-      await this.fileService.deleteFileGoogleDrive(existUser.avatar);
-    const image = await this.fileService.uploadToGoogleDrive(avatar, GOOGLE_DRIVE_USER_AVATAR_IMG);
-    return await this.updateOneBy(id, {
       avatar: image,
+      ...(lastName && firstName && { name: `${lastName} ${firstName}`.trim() }),
     });
   }
 }

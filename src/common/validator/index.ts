@@ -65,5 +65,5 @@ export const IsObject = (validationOptions?: ValidationOptions) =>
 export const IsMongoId = (validationOptions?: ValidationOptions) =>
   _IsMongoId({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });
 
-  export const IsDate = (validationOptions?: ValidationOptions) =>
+export const IsDate = (validationOptions?: ValidationOptions) =>
   _IsDate({ ...validationOptions, message: VALIDATE_MESSAGE.INPUT_NOT_VALID });

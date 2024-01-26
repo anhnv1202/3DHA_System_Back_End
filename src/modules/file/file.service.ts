@@ -11,17 +11,15 @@ export class FileService {
   async uploadToGoogleDrive(file: Express.Multer.File, folder: string): Promise<string> {
     const tempFilePath = path.join(__dirname, file.originalname);
     fs.writeFileSync(tempFilePath, file.buffer);
-
+    file.filename = file.originalname;
     file.path = tempFilePath;
-
     const fileUrl = await this.googleDriveService.uploadFile(file, folder);
-
     fs.unlinkSync(tempFilePath);
 
-    return fileUrl;
+    return getFileId(fileUrl);
   }
 
-  async deleteFileGoogleDrive(fileUrl: string): Promise<void> {
-    return await this.googleDriveService.deleteFile(getFileId(fileUrl));
+  async deleteFileGoogleDrive(fileId: string): Promise<void> {
+    return await this.googleDriveService.deleteFile(fileId);
   }
 }
