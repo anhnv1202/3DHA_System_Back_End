@@ -20,4 +20,3 @@ export class LaterListDTO {
   @IsNotEmpty()
   course: string;
 }
-
