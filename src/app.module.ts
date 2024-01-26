@@ -1,3 +1,4 @@
+import { GoogleDriveModule } from 'nestjs-google-drive';
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { JwtModule } from '@nestjs/jwt';
@@ -26,12 +27,19 @@ import { ChapterModule } from './modules/chapter/chapter.module';
 import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { DiscountModule } from './modules/discount/discount.module';
+import { FileModule } from './modules/file/file.module';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       envFilePath: '.env',
       isGlobal: true,
+    }),
+    GoogleDriveModule.register({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      redirectUrl: process.env.GOOGLE_REDIRECT_URL,
+      refreshToken: process.env.GOOGLE_REFRESH_TOKEN,
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -82,6 +90,7 @@ import { DiscountModule } from './modules/discount/discount.module';
     WishlistModule,
     CouponModule,
     DiscountModule,
+    FileModule,
   ],
   controllers: [],
   providers: [],
