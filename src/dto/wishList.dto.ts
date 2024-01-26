@@ -13,3 +13,11 @@ export class WishlistDTO {
   @IsNotEmpty()
   course: string;
 }
+
+export class LaterListDTO {
+  @ApiProperty()
+  @IsMongoId()
+  @IsNotEmpty()
+  course: string;
+}
+

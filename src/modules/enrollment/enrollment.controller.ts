@@ -24,8 +24,16 @@ export class EnrollmentController {
   @Auth([Roles.ADMIN])
   @ApiQuery({ name: 'enrollment', type: EnrollmentQueryDTO })
   @ApiPaginationResponse(Enrollment)
-  getAllMajor(@GetPagination() pagination: Pagination): Promise<PaginationResult<Enrollment>> {
+  getAllEnrollment(@GetPagination() pagination: Pagination): Promise<PaginationResult<Enrollment>> {
     return this.enrollmentService.getAll(pagination);
+  }
+
+  @Get('get')
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiNormalResponse({ model: Enrollment, type: ResponseType.Ok })
+  getOneEnrollment(@Profile() user: User) {
+    return this.enrollmentService.getCurrent(user);
   }
 
   @Post('create')
@@ -40,7 +48,7 @@ export class EnrollmentController {
   @ApiParam({ name: 'id', type: String, required: true })
   @ApiBody({ type: UpdateEnrollmentDTO })
   @ApiNormalResponse({ model: Enrollment, type: ResponseType.Ok })
-  updateMajor(@Body() body: UpdateEnrollmentDTO, @Param() params: { id: string }, @Profile() user: User) {
+  updateEnrollment(@Body() body: UpdateEnrollmentDTO, @Param() params: { id: string }, @Profile() user: User) {
     return this.enrollmentService.update(user, params.id, body);
   }
 }

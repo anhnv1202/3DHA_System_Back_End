@@ -5,6 +5,7 @@ import { User } from '@models/user.model';
 import { Body, Controller, Get, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiTags } from '@nestjs/swagger';
 import { WishlistDTO } from 'src/dto/wishlist.dto';
+import { LaterListDTO } from './../../dto/wishlist.dto';
 import { WishlistService } from './wishlist.service';
 
 @Controller('wishlist')
@@ -18,11 +19,19 @@ export class WishlistController {
     return this.wishlistService.getAll(user);
   }
 
-  @Put('update')
+  @Put('update-wishlist')
   @ApiBearerAuth()
   @ApiBody({ type: WishlistDTO })
   @ApiNormalResponse({ model: User, type: ResponseType.Ok })
   updateWishlist(@Body() body: WishlistDTO, @Profile() user: User) {
     return this.wishlistService.update(user, body);
+  }
+
+  @Put('update-later-list')
+  @ApiBearerAuth()
+  @ApiBody({ type: LaterListDTO })
+  @ApiNormalResponse({ model: User, type: ResponseType.Ok })
+  updateLaterList(@Body() body: LaterListDTO, @Profile() user: User) {
+    return this.wishlistService.updateLaterList(user, body);
   }
 }

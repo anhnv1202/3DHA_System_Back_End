@@ -34,6 +34,10 @@ export class EnrollmentService {
     return { data, total };
   }
 
+  async getCurrent(user: User) {
+    return await this.userRepository.findById(user._id, [{ path: 'enrollment' }]);
+  }
+
   async create(user: User, data) {
     const session = await this.connection.startSession();
     session.startTransaction();
@@ -86,14 +90,17 @@ export class EnrollmentService {
           });
         }
       }
-      await this.userRepository.update(user._id, { wishlist: [] });
-      await session.commitTransaction();
-      return await this.enrollmentsRepository.create({
+
+      const newEnrollment = await this.enrollmentsRepository.create({
         courseList,
         orderBy: user._id,
         totalPrice: totalCoursePrice,
         ...(data.coupon ? { coupon: data.coupon } : {}),
       });
+
+      await this.userRepository.update(user._id, { wishlist: [], $push: { enrollment: newEnrollment._id } });
+      await session.commitTransaction();
+      return newEnrollment;
     } catch (e) {
       await session.abortTransaction();
       throw new InternalServerErrorException(e);
@@ -106,7 +113,7 @@ export class EnrollmentService {
     const currentEnrollment = await this.enrollmentsRepository.update(id, { status: data.status });
     const update =
       data.status === 2
-        ? await this.userRepository.update(user._id, { enroll: currentEnrollment.courseList })
+        ? await this.userRepository.update(user._id, { courseList: currentEnrollment.courseList })
         : await this.userRepository.findById(user._id);
     return update;
   }
