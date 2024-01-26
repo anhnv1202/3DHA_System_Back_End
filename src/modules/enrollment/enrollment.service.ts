@@ -53,6 +53,10 @@ export class EnrollmentService {
         throw new BadRequestException('wishlist-empty');
       }
       let totalCoursePrice = wishlist.reduce((sum, course) => {
+        courseList.push(course._id.toString());
+        this.courseRepository.update(course._id, {
+          sold: (course.sold += 1),
+        });
         if (course.discount) {
           if (course.discount.limit <= 0 || new Date(course.discount.expired) < new Date()) {
             throw new BadRequestException('discount-expired');
@@ -62,16 +66,8 @@ export class EnrollmentService {
               limit: (course.discount.limit -= 1),
             });
           }
-          this.courseRepository.update(course._id, {
-            sold: (course.sold += 1),
-          });
-          courseList.push(course._id.toString());
           return course.price * (1 - course.discount.promotion / 100) + sum;
         }
-        this.courseRepository.update(course._id, {
-          sold: (course.sold += 1),
-        });
-        courseList.push(course._id.toString());
         return course.price + sum;
       }, 0);
 
@@ -84,7 +80,7 @@ export class EnrollmentService {
           throw new BadRequestException('coupon-expired');
         }
         totalCoursePrice = totalCoursePrice * (1 - currentCoupon.promotion / 100);
-        if (currentCoupon.limit) {
+        if (!currentCoupon.limit) {
           this.couponsRepository.update(data.coupon, {
             limit: (currentCoupon.limit -= 1),
           });
@@ -95,7 +91,7 @@ export class EnrollmentService {
         courseList,
         orderBy: user._id,
         totalPrice: totalCoursePrice,
-        ...(data.coupon ? { coupon: data.coupon } : {}),
+        ...(data.coupon && { coupon: data.coupon }),
       });
 
       await this.userRepository.update(user._id, { wishlist: [], $push: { enrollment: newEnrollment._id } });
