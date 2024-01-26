@@ -6,7 +6,11 @@ import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 // import { EnrollmentDTO } from 'src/dto/enrollment.dto';
 import { SEARCH_BY } from '@common/constants/global.const';
-import { enrollmentPopulate } from '@common/constants/populate.const';
+import {
+  enrollmentFromUserPopulate,
+  enrollmentPopulate,
+  wishlistFromUserPopulate,
+} from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { Enrollment } from '@models/enrollment.model';
 import { CoursesRepository } from '@modules/course/course.repository';
@@ -35,7 +39,7 @@ export class EnrollmentService {
   }
 
   async getCurrent(user: User) {
-    return await this.userRepository.findById(user._id, [{ path: 'enrollment' }]);
+    return (await this.userRepository.findById(user._id, enrollmentFromUserPopulate)).enrollment;
   }
 
   async create(user: User, data) {
@@ -43,11 +47,7 @@ export class EnrollmentService {
     session.startTransaction();
     try {
       const courseList = [];
-      const currentCourses = (
-        await this.userRepository.findById(user._id, [
-          { path: 'wishlist', populate: [{ path: 'discount', select: 'promotion' }] },
-        ])
-      ).toObject();
+      const currentCourses = (await this.userRepository.findById(user._id, wishlistFromUserPopulate)).toObject();
       const wishlist = currentCourses.wishlist;
       if (wishlist.length <= 0) {
         throw new BadRequestException('wishlist-empty');

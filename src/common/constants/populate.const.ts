@@ -41,3 +41,6 @@ export const discountPopulate = [{ path: 'course', select: 'name' }];
 export const enrollmentPopulate = [{ path: 'courseList', select: 'orderBy' }];
 
 export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];
+
+export const wishlistFromUserPopulate = [{ path: 'wishlist', populate: [{ path: 'discount', select: 'promotion' }] }];
+export const enrollmentFromUserPopulate = [{ path: 'enrollment' }];
