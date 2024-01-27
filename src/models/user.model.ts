@@ -4,7 +4,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import * as bcrypt from 'bcrypt';
 import { NextFunction } from 'express';
-import { Document, SchemaTypes } from 'mongoose';
+import { Document, SchemaTypes, Types } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class User extends Document {
@@ -55,6 +55,10 @@ export class User extends Document {
     required: false,
   })
   courseInfo: CourseInfo[];
+
+  @ApiProperty()
+  @Prop({ type: [SchemaTypes.ObjectId], ref: 'Enrollment', required: true, default: [] })
+  enrollment: Types.ObjectId[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

@@ -38,10 +38,16 @@ export const chapterPopulate = [
 
 export const discountPopulate = [{ path: 'course', select: 'name' }];
 
-export const enrollmentPopulate = [{ path: 'courseList', select: 'orderBy' }];
+export const enrollmentPopulate = [
+  { path: 'courseList', select: 'name price' },
+  { path: 'coupon', select: 'name promotion' },
+  { path: 'orderBy', select: 'name' },
+];
+
+export const enrollmentCurrentPopulate = [{ path: 'enrollment' }];
 
 export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];
 
 export const wishlistFromUserPopulate = [{ path: 'wishlist', populate: [{ path: 'discount', select: 'promotion' }] }];
 
-export const courseInfoFromUserPopulate = [{ path: 'courseInfo.course' }];
+export const enrollmentFromUserPopulate = [{ path: 'courseInfo.course' }];

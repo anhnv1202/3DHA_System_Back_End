@@ -1,5 +1,5 @@
 import { CourseStatus, SEARCH_BY } from '@common/constants/global.const';
-import { courseInfoFromUserPopulate, enrollmentPopulate } from '@common/constants/populate.const';
+import { enrollmentCurrentPopulate, enrollmentPopulate } from '@common/constants/populate.const';
 import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { Enrollment } from '@models/enrollment.model';
@@ -36,7 +36,7 @@ export class EnrollmentService {
   }
 
   async getCurrent(user: User) {
-    return (await this.userRepository.findById(user._id, courseInfoFromUserPopulate)).courseInfo;
+    return (await this.userRepository.findById(user._id, enrollmentCurrentPopulate)).enrollment;
   }
 
   async create(user: User, data: EnrollmentDTO | null) {
