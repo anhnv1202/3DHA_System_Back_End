@@ -2,27 +2,42 @@ import { Payment } from '@common/constants/global.const';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
-import { Coupon } from './coupon.model';
-import { Course } from './course.models';
+import { CourseList } from './../common/interfaces/courseList';
 import { User } from './user.model';
 
 @Schema({ timestamps: true })
 export class Enrollment extends Document {
   @ApiProperty()
-  @Prop({ required: true, type: [SchemaTypes.ObjectId], ref: 'Course' })
-  courseList: PopulatedDoc<Course, Types.ObjectId>;
+  @Prop({
+    type: [
+      {
+        name: { type: String },
+        price: { type: Number },
+        discount: { type: Number, default: 0 },
+        lastPrice: { type: Number },
+        author: { type: SchemaTypes.ObjectId, ref: 'User' },
+      },
+    ],
+    ref: 'Course',
+    required: false,
+  })
+  courseList: CourseList[];
 
   @ApiProperty()
   @Prop({ required: true, type: SchemaTypes.ObjectId, ref: 'User' })
   orderBy: PopulatedDoc<User, Types.ObjectId>;
 
   @ApiProperty()
-  @Prop({ type: SchemaTypes.ObjectId, ref: 'Coupon' })
-  coupon: PopulatedDoc<Coupon, Types.ObjectId>;
+  @Prop({ type: Number })
+  coupon: number;
 
   @ApiProperty()
   @Prop({ required: true })
   totalPrice: number;
+
+  @ApiProperty()
+  @Prop({ required: true })
+  lastPrice: number;
 
   @ApiProperty()
   @Prop({ required: true, default: Payment.PROCESSING })

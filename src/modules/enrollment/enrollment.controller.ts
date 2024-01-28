@@ -8,7 +8,7 @@ import { Enrollment } from '@models/enrollment.model';
 import { User } from '@models/user.model';
 import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { EnrollmentDTO, EnrollmentQueryDTO } from 'src/dto/enrollment.dto';
+import { EnrollmentQueryDTO } from 'src/dto/enrollment.dto';
 import { ApiPaginationResponse } from './../../common/decorators/api-response/api-pagination-response.decorator';
 import { UpdateEnrollmentDTO } from './../../dto/enrollment.dto';
 import { EnrollmentService } from './enrollment.service';
@@ -38,7 +38,7 @@ export class EnrollmentController {
   @Post('create')
   @ApiBearerAuth()
   @ApiNormalResponse({ model: Enrollment, type: ResponseType.Ok })
-  createEnrollment(@Body() body: EnrollmentDTO | null, @Profile() user: User) {
+  createEnrollment(@Body() body, @Profile() user: User) {
     return this.enrollmentService.create(user, body);
   }
 

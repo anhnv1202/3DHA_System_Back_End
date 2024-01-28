@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
 import { Chapter } from './chapter.model';
+import { OutcomeList } from './outcomeList.model';
 import { Question } from './question.model';
 
 @Schema({ timestamps: true })
@@ -20,7 +21,7 @@ export class Quizz extends Document {
 
   @ApiProperty()
   @Prop({ type: [SchemaTypes.ObjectId], ref: 'OutcomeList', required: true, default: [] })
-  outcomeList: Types.ObjectId[];
+  outcomeList: PopulatedDoc<OutcomeList, Types.ObjectId>[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

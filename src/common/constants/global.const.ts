@@ -140,4 +140,5 @@ export const SEARCH_BY = {
   COUPON: ['name', 'promotion', 'limit', 'expired'],
   DISCOUNT: ['promotion', 'limit', 'expired', 'course'],
   ENROLLMENT: ['orderBy', 'coupon', 'totalPrice', 'course', 'status'],
+  BILL: ['course', 'authorReceipt', 'adminReceipt'],
 };

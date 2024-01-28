@@ -4,14 +4,16 @@ import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { Enrollment } from '@models/enrollment.model';
 import { User } from '@models/user.model';
+import { BillsRepository } from '@modules/bill/bill.repository';
 import { CouponsRepository } from '@modules/coupon/coupon.repository';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { DiscountsRepository } from '@modules/discount/discount.repository';
+import { InvoicesRepository } from '@modules/invoice/invoice.repository';
 import { UsersRepository } from '@modules/user/user.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
-import { EnrollmentDTO, UpdateEnrollmentDTO } from 'src/dto/enrollment.dto';
+import { UpdateEnrollmentDTO } from 'src/dto/enrollment.dto';
 import { EnrollmentsRepository } from './enrollment.repository';
 
 @Injectable()
@@ -21,7 +23,9 @@ export class EnrollmentService {
     private enrollmentsRepository: EnrollmentsRepository,
     private couponsRepository: CouponsRepository,
     private courseRepository: CoursesRepository,
-    private discountsRepository: DiscountsRepository,
+    private discountRepository: DiscountsRepository,
+    private billRepository: BillsRepository,
+    private invoicesRepository: InvoicesRepository,
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
@@ -39,11 +43,12 @@ export class EnrollmentService {
     return (await this.userRepository.findById(user._id, enrollmentCurrentPopulate)).enrollment;
   }
 
-  async create(user: User, data: EnrollmentDTO | null) {
+  async create(user: User, data) {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
       const courseList = [];
+      let couponPromotion = 0;
       const currentUser = (await this.userRepository.findById(user._id, ['courseInfo.course'])).toObject();
       const wishlist = currentUser.courseInfo.filter(
         (courseInfo: CourseInfo) => courseInfo.status === CourseStatus.WISHLIST,
@@ -51,29 +56,42 @@ export class EnrollmentService {
       if (wishlist.length <= 0) {
         throw new BadRequestException('wishlist-empty');
       }
-      let totalCoursePrice = wishlist.reduce((sum: number, current) => {
-        const course = current.course;
+      const totalCoursePricePromises = wishlist.map(async (current) => {
+        const course = (await this.courseRepository.findById(current.course._id, ['discount'])).toObject();
         if (!course.discount) {
-          courseList.push(course._id.toString());
-          course.sold += 1;
-          this.courseRepository.update(course._id, {
-            sold: course.sold,
+          courseList.push({
+            name: current.course.name,
+            price: current.course.price,
+            author: current.course.author.toString(),
           });
-          return course.price + sum;
+          this.courseRepository.update(current.course._id, {
+            $inc: { sold: 1 },
+          });
+          return course.price;
         }
-        if (course?.discount.limit <= 0 || new Date(course.discount.expired) < new Date()) {
+        if (course.discount.limit <= 0 || new Date(course.discount.expired) < new Date()) {
           throw new BadRequestException('discount-expired');
         }
-        this.discountsRepository.update(course.discount._id, {
-          limit: (course.discount.limit -= 1),
+        this.discountRepository.update(course.discount, {
+          $inc: { limit: -1 },
         });
-        courseList.push(course._id.toString());
-        this.courseRepository.update(course._id, {
-          sold: (course.sold += 1),
+        const lastPrice = (course.price * (1 - course.discount.promotion / 100)).toFixed(2);
+        courseList.push({
+          name: current.course.name,
+          price: current.course.price,
+          discount: course.discount.promotion,
+          lastPrice: lastPrice,
+          author: current.course.author.toString(),
         });
-        return course.price * (1 - course.discount.promotion / 100) + sum;
-      }, 0);
+        this.courseRepository.update(current.course._id, {
+          $inc: { sold: 1 },
+        });
+        return lastPrice;
+      });
 
+      const totalCoursePriceArray = await Promise.all(totalCoursePricePromises);
+      const totalCoursePrice = totalCoursePriceArray.reduce((sum, value) => sum + value, 0);
+      let lastCoursePrice = totalCoursePrice;
       if (data.coupon) {
         const currentCoupon = await this.couponsRepository.findById(data.coupon);
         if (!currentCoupon) {
@@ -82,16 +100,18 @@ export class EnrollmentService {
         if (currentCoupon.limit <= 0 || new Date(currentCoupon.expired) < new Date()) {
           throw new BadRequestException('coupon-expired');
         }
-        totalCoursePrice = totalCoursePrice * (1 - currentCoupon.promotion / 100);
+        couponPromotion = currentCoupon.promotion;
+        lastCoursePrice = (totalCoursePrice * (1 - currentCoupon.promotion / 100)).toFixed(2);
         this.couponsRepository.update(data.coupon, {
-          limit: (currentCoupon.limit -= 1),
+          $inc: { limit: -1 },
         });
       }
       const newEnrollment = await this.enrollmentsRepository.create({
         courseList,
         orderBy: user._id,
         totalPrice: totalCoursePrice,
-        ...(data.coupon && { coupon: data.coupon }),
+        lastPrice: lastCoursePrice,
+        coupon: couponPromotion,
       });
       await this.userRepository.update(user._id, { $push: { enrollment: newEnrollment._id } });
       await session.commitTransaction();
@@ -105,9 +125,42 @@ export class EnrollmentService {
   }
 
   async update(user: User, id: string, data: UpdateEnrollmentDTO): Promise<User | null> {
-    await this.enrollmentsRepository.update(id, { status: data.status });
+    const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
     const currentUser = (await this.userRepository.findById(user._id)).toObject();
     if (data.status === 2) {
+      const courseList = currentEnrollment.courseList;
+      const invoicePromises = [];
+      for (const element of courseList) {
+        let adminReceipt = Number((element.price * 0.15).toFixed(2));
+        const authorReceipt = Number((element.price * (1 - 0.15)).toFixed(2));
+        adminReceipt = currentEnrollment.coupon
+          ? adminReceipt - Number((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
+          : adminReceipt;
+        const currentBill = await this.billRepository.create({
+          course: element.name,
+          authorReceipt,
+          adminReceipt,
+        });
+        const existInvoice = await this.invoicesRepository.findOne({ user: element.author });
+        existInvoice
+          ? await this.invoicesRepository.update(existInvoice._id, {
+              user: element.author,
+              $inc: { receipt: authorReceipt },
+              $push: { bills: currentBill._id.toString() },
+            })
+          : await this.invoicesRepository.create({
+              user: element.author,
+              receipt: authorReceipt,
+              $push: { bills: currentBill._id.toString() },
+            });
+        await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
+          user: '65a2c87791cf6eee240147a8',
+          $inc: { receipt: adminReceipt },
+          $push: { bills: currentBill._id.toString() },
+        });
+        invoicePromises.push(Promise.resolve());
+      }
+      await Promise.all(invoicePromises);
       currentUser.courseInfo.forEach(async (courseInfo: CourseInfo) => {
         if (courseInfo.status === CourseStatus.WISHLIST) {
           courseInfo.status = CourseStatus.ENROLL;
