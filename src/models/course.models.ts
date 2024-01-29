@@ -1,4 +1,5 @@
 import { DEFAULT_THUMB_COURSE } from '@common/constants/global.const';
+import { LikeStatus } from '@common/interfaces/likeStatus';
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { ApiProperty } from '@nestjs/swagger';
 import { Document, PopulatedDoc, SchemaTypes, Types } from 'mongoose';
@@ -53,6 +54,20 @@ export class Course extends Document {
   @ApiProperty()
   @Prop({ type: Types.ObjectId, ref: 'Discount' })
   discount: PopulatedDoc<Discount, Types.ObjectId>;
+
+  @ApiProperty()
+  @Prop({
+    type: [
+      {
+        user: { type: SchemaTypes.ObjectId, ref: 'User' },
+        status: { type: Boolean },
+      },
+    ],
+    ref: 'User',
+    required: false,
+    default: [],
+  })
+  likes: LikeStatus[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;

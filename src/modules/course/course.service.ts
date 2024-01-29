@@ -1,6 +1,7 @@
 import { SEARCH_BY } from '@common/constants/global.const';
 import { coursePopulate } from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { LikeStatus } from '@common/interfaces/likeStatus';
 import { Course } from '@models/course.models';
 import { User } from '@models/user.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
@@ -58,4 +59,15 @@ export class CourseService {
     }
     return await this.courseRepository.softDelete(id);
   }
+
+  async updateLike(user: User, id: string, data): Promise<Course | null> {
+    const { option } = data;
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
+
+    const currentUser = currentCourse.likes.find((likeInfo: LikeStatus) => likeInfo.user === user._id);
+
+    const likeArr = currentCourse.likes;
+    return await this.courseRepository.update(id, updateOperation);
+  }
 }
+  

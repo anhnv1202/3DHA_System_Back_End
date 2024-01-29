@@ -53,6 +53,7 @@ export class User extends Document {
     ],
     ref: 'Course',
     required: false,
+    default: [],
   })
   courseInfo: CourseInfo[];
 
