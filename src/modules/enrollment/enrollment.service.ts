@@ -1,4 +1,4 @@
-import { CourseStatus, SEARCH_BY } from '@common/constants/global.const';
+import { CourseStatus, Payment, SEARCH_BY } from '@common/constants/global.const';
 import { enrollmentCurrentPopulate, enrollmentPopulate } from '@common/constants/populate.const';
 import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
@@ -56,41 +56,53 @@ export class EnrollmentService {
       if (wishlist.length <= 0) {
         throw new BadRequestException('wishlist-empty');
       }
-      const totalCoursePricePromises = wishlist.map(async (current) => {
-        const course = (await this.courseRepository.findById(current.course._id, ['discount'])).toObject();
-        if (!course.discount) {
+      const totalCoursePriceArray = await Promise.all(
+        wishlist.map(async (current) => {
+          const course = await this.courseRepository.findById(current.course._id, ['discount']);
+          const courseObject = course.toObject();
+          if (!courseObject.discount) {
+            courseList.push({
+              name: current.course.name,
+              price: current.course.price,
+              author: current.course.author.toString(),
+            });
+            const updateSold = await this.courseRepository.update(current.course._id, {
+              $inc: { sold: 1 },
+            });
+            if (!updateSold) {
+              throw new BadRequestException('update-sold-error');
+            }
+
+            return current.course.price;
+          }
+          if (courseObject.discount.limit <= 0 || new Date(courseObject.discount.expired) < new Date()) {
+            throw new BadRequestException('discount-expired');
+          }
+          const updateLimit = await this.discountRepository.update(courseObject.discount, {
+            $inc: { limit: -1 },
+          });
+          if (!updateLimit) {
+            throw new BadRequestException('update-limit-error');
+          }
+          const lastPrice = parseFloat((current.course.price * (1 - courseObject.discount.promotion / 100)).toFixed(2));
           courseList.push({
             name: current.course.name,
             price: current.course.price,
+            discount: courseObject.discount.promotion,
+            lastPrice: lastPrice,
             author: current.course.author.toString(),
           });
-          this.courseRepository.update(current.course._id, {
+          const updateSold = await this.courseRepository.update(current.course._id, {
             $inc: { sold: 1 },
           });
-          return course.price;
-        }
-        if (course.discount.limit <= 0 || new Date(course.discount.expired) < new Date()) {
-          throw new BadRequestException('discount-expired');
-        }
-        this.discountRepository.update(course.discount, {
-          $inc: { limit: -1 },
-        });
-        const lastPrice = (course.price * (1 - course.discount.promotion / 100)).toFixed(2);
-        courseList.push({
-          name: current.course.name,
-          price: current.course.price,
-          discount: course.discount.promotion,
-          lastPrice: lastPrice,
-          author: current.course.author.toString(),
-        });
-        this.courseRepository.update(current.course._id, {
-          $inc: { sold: 1 },
-        });
-        return lastPrice;
-      });
-
-      const totalCoursePriceArray = await Promise.all(totalCoursePricePromises);
+          if (!updateSold) {
+            throw new BadRequestException('update-sold-error');
+          }
+          return lastPrice;
+        }),
+      );
       const totalCoursePrice = totalCoursePriceArray.reduce((sum, value) => sum + value, 0);
+
       let lastCoursePrice = totalCoursePrice;
       if (data.coupon) {
         const currentCoupon = await this.couponsRepository.findById(data.coupon);
@@ -101,10 +113,13 @@ export class EnrollmentService {
           throw new BadRequestException('coupon-expired');
         }
         couponPromotion = currentCoupon.promotion;
-        lastCoursePrice = (totalCoursePrice * (1 - currentCoupon.promotion / 100)).toFixed(2);
-        this.couponsRepository.update(data.coupon, {
+        lastCoursePrice = parseFloat((totalCoursePrice * (1 - currentCoupon.promotion / 100)).toFixed(2));
+        const updateLimit = await this.couponsRepository.update(data.coupon, {
           $inc: { limit: -1 },
         });
+        if (!updateLimit) {
+          throw new BadRequestException('update-limit-error');
+        }
       }
       const newEnrollment = await this.enrollmentsRepository.create({
         courseList,
@@ -125,51 +140,97 @@ export class EnrollmentService {
   }
 
   async update(user: User, id: string, data: UpdateEnrollmentDTO): Promise<User | null> {
-    const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
-    const currentUser = (await this.userRepository.findById(user._id)).toObject();
-    if (data.status === 2) {
-      const courseList = currentEnrollment.courseList;
-      const invoicePromises = [];
-      for (const element of courseList) {
-        let adminReceipt = Number((element.price * 0.15).toFixed(2));
-        const authorReceipt = Number((element.price * (1 - 0.15)).toFixed(2));
-        adminReceipt = currentEnrollment.coupon
-          ? adminReceipt - Number((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
-          : adminReceipt;
-        const currentBill = await this.billRepository.create({
-          course: element.name,
-          authorReceipt,
-          adminReceipt,
-        });
-        const existInvoice = await this.invoicesRepository.findOne({ user: element.author });
-        existInvoice
-          ? await this.invoicesRepository.update(existInvoice._id, {
-              user: element.author,
-              $inc: { receipt: authorReceipt },
-              $push: { bills: currentBill._id.toString() },
-            })
-          : await this.invoicesRepository.create({
-              user: element.author,
-              receipt: authorReceipt,
-              $push: { bills: currentBill._id.toString() },
-            });
-        await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
-          user: '65a2c87791cf6eee240147a8',
-          $inc: { receipt: adminReceipt },
-          $push: { bills: currentBill._id.toString() },
-        });
-        invoicePromises.push(Promise.resolve());
-      }
-      await Promise.all(invoicePromises);
-      currentUser.courseInfo.forEach(async (courseInfo: CourseInfo) => {
-        if (courseInfo.status === CourseStatus.WISHLIST) {
-          courseInfo.status = CourseStatus.ENROLL;
+    const session = await this.connection.startSession();
+    session.startTransaction();
+    try {
+      const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
+      const currentUser = (await this.userRepository.findById(user._id)).toObject();
+      if (data.status === Payment.SUCCESSFUL) {
+        const courseList = currentEnrollment.courseList;
+        const invoicePromises = [];
+        for (const element of courseList) {
+          let adminReceipt = parseFloat((element.price * 0.15).toFixed(2));
+          const authorReceipt = parseFloat((element.price * (1 - 0.15)).toFixed(2));
+          adminReceipt = currentEnrollment.coupon
+            ? adminReceipt - parseFloat((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
+            : adminReceipt;
+          const currentBill = await this.billRepository.create({
+            course: element.name,
+            authorReceipt,
+            adminReceipt,
+          });
+          const currentInvoice = await this.invoicesRepository.insertOrUpdate(
+            { user: element.author },
+            { $inc: { receipt: authorReceipt }, $push: { bills: currentBill._id.toString() } },
+          );
+          if (!currentInvoice) {
+            throw new BadRequestException('create-invoice-error');
+          }
+          const adminInvoice = await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
+            user: '65a2c87791cf6eee240147a8',
+            $inc: { receipt: adminReceipt },
+            $push: { bills: currentBill._id.toString() },
+          });
+          if (!adminInvoice) {
+            throw new BadRequestException('create-invoice-error');
+          }
+          invoicePromises.push(Promise.resolve());
         }
-      });
-      await this.userRepository.update(user._id, {
-        courseInfo: currentUser.courseInfo,
-      });
+        await Promise.all(invoicePromises);
+        currentUser.courseInfo.forEach(async (courseInfo: CourseInfo) => {
+          if (courseInfo.status === CourseStatus.WISHLIST) {
+            courseInfo.status = CourseStatus.ENROLL;
+          }
+        });
+        await this.userRepository.update(user._id, {
+          courseInfo: currentUser.courseInfo,
+        });
+      }
+      return await this.userRepository.findById(user._id);
+    } catch (e) {
+      await session.abortTransaction();
+      throw new InternalServerErrorException(e);
+    } finally {
+      await session.endSession();
     }
-    return await this.userRepository.findById(user._id);
   }
 }
+
+// async update(user: User, id: string, data: UpdateEnrollmentDTO): Promise<User | null> {
+//   const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
+//   const courseList = currentEnrollment.courseList;
+//   const currentUser = (await this.userRepository.findById(user._id)).toObject();
+
+//   if (data.status === 2) {
+//     await Promise.all(
+//       for (const element of courseList) {
+//         const adminReceipt = Number(
+//           (
+//             element.price * 0.15 -
+//             (currentEnrollment.coupon ? currentEnrollment.totalPrice - currentEnrollment.lastPrice : 0)
+//           ).toFixed(2),
+//         );
+//         const authorReceipt = Number((element.price * 0.85).toFixed(2));
+//         const currentBill = await this.billRepository.create({ course: element.name, authorReceipt, adminReceipt });
+
+//         await this.invoicesRepository.insertOrUpdate(
+//           { user: element.author },
+//           { $inc: { receipt: authorReceipt }, $push: { bills: currentBill._id.toString() } },
+//         );
+
+//         await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
+//           $inc: { receipt: adminReceipt },
+//           $push: { bills: currentBill._id.toString() },
+//         });
+//       }
+//     );
+
+//     currentUser.courseInfo.forEach((courseInfo) => {
+//       if (courseInfo.status === CourseStatus.WISHLIST) courseInfo.status = CourseStatus.ENROLL;
+//     });
+
+//     await this.userRepository.update(user._id, { courseInfo: currentUser.courseInfo });
+//   }
+
+//   return this.userRepository.findById(user._id);
+// }

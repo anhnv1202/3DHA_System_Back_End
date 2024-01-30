@@ -1,6 +1,6 @@
 import { CourseStatus } from '@common/constants/global.const';
 import { Course } from '@models/course.models';
-import { Types, Document, PopulatedDoc } from 'mongoose';
+import { Document, PopulatedDoc, Types } from 'mongoose';
 
 export interface CourseInfo {
   course: PopulatedDoc<Course & Document, Types.ObjectId>[];

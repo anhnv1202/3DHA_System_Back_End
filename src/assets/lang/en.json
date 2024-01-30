@@ -29,5 +29,8 @@
   "discount-expired": "Discount expired",
   "coupon-expired": "Coupon expired",
   "coupon-not-existed": "Coupon do not exists",
-  "wishlist-empty": "Wishlist is empty"
+  "wishlist-empty": "Wishlist is empty",
+  "update-sold-error": "Update sold error",
+  "update-limit-error": "Update limit error",
+  "create-invoice-error": "Create invoice error"
 }
