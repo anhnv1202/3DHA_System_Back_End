@@ -3,6 +3,6 @@ import { Course } from '@models/course.models';
 import { Document, PopulatedDoc, Types } from 'mongoose';
 
 export interface CourseInfo {
-  course: PopulatedDoc<Course & Document, Types.ObjectId>[];
+  course: Course;
   status: CourseStatus;
 }
