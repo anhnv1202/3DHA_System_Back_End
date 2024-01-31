@@ -143,3 +143,8 @@ export const SEARCH_BY = {
   BILL: ['course', 'authorReceipt', 'adminReceipt'],
   INVOICE: ['user', 'receipt', 'bills'],
 };
+
+
+export const invoiceAdmin = {
+  INVOICE_ID: '65b5804ca14992a505f06aec',
+};

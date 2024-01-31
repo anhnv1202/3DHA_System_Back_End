@@ -1,4 +1,4 @@
-import { CourseStatus, Payment, SEARCH_BY } from '@common/constants/global.const';
+import { CourseStatus, Payment, SEARCH_BY, invoiceAdmin } from '@common/constants/global.const';
 import { enrollmentCurrentPopulate, enrollmentPopulate } from '@common/constants/populate.const';
 import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
@@ -166,8 +166,7 @@ export class EnrollmentService {
           if (!currentInvoice) {
             throw new BadRequestException('create-invoice-error');
           }
-          const adminInvoice = await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
-            user: '65a2c87791cf6eee240147a8',
+          const adminInvoice = await this.invoicesRepository.update(invoiceAdmin.INVOICE_ID, {
             $inc: { receipt: adminReceipt },
             $push: { bills: currentBill._id.toString() },
           });
@@ -196,42 +195,3 @@ export class EnrollmentService {
     }
   }
 }
-
-// async update(user: User, id: string, data: UpdateEnrollmentDTO): Promise<User | null> {
-//   const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
-//   const courseList = currentEnrollment.courseList;
-//   const currentUser = (await this.userRepository.findById(user._id)).toObject();
-
-//   if (data.status === 2) {
-//     await Promise.all(
-//       for (const element of courseList) {
-//         const adminReceipt = Number(
-//           (
-//             element.price * 0.15 -
-//             (currentEnrollment.coupon ? currentEnrollment.totalPrice - currentEnrollment.lastPrice : 0)
-//           ).toFixed(2),
-//         );
-//         const authorReceipt = Number((element.price * 0.85).toFixed(2));
-//         const currentBill = await this.billRepository.create({ course: element.name, authorReceipt, adminReceipt });
-
-//         await this.invoicesRepository.insertOrUpdate(
-//           { user: element.author },
-//           { $inc: { receipt: authorReceipt }, $push: { bills: currentBill._id.toString() } },
-//         );
-
-//         await this.invoicesRepository.update('65b5804ca14992a505f06aec', {
-//           $inc: { receipt: adminReceipt },
-//           $push: { bills: currentBill._id.toString() },
-//         });
-//       }
-//     );
-
-//     currentUser.courseInfo.forEach((courseInfo) => {
-//       if (courseInfo.status === CourseStatus.WISHLIST) courseInfo.status = CourseStatus.ENROLL;
-//     });
-
-//     await this.userRepository.update(user._id, { courseInfo: currentUser.courseInfo });
-//   }
-
-//   return this.userRepository.findById(user._id);
-// }
