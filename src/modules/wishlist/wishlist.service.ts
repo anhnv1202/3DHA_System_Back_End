@@ -34,7 +34,7 @@ export class WishlistService {
         throw new BadRequestException(option === Option.ADD ? 'course-existed' : 'course-not-existed');
       }
       const updateOperation =
-        option === 1
+        option === Option.ADD
           ? { $push: { courseInfo: { course, status: CourseStatus.WISHLIST } } }
           : { $pull: { courseInfo: { course } } };
       await this.userRepository.update(user._id, updateOperation);

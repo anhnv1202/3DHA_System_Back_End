@@ -1,4 +1,4 @@
-import { SEARCH_BY } from '@common/constants/global.const';
+import { Option, SEARCH_BY } from '@common/constants/global.const';
 import { authorFromCoursePopulate, quizzPopulate } from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { Quizz } from '@models/quizz.model';
@@ -6,7 +6,7 @@ import { User } from '@models/user.model';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
-import mongoose, { Connection } from 'mongoose';
+import { Connection } from 'mongoose';
 import { QuizzDTO, UpdateQuestionInQuizzDTO, UpdateQuizzDTO } from 'src/dto/quizz.dto';
 import { QuizzsRepository } from './quizz.repository';
 
@@ -62,11 +62,12 @@ export class QuizzService {
     if (currentQuizz.chapter.course.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const isQuestionExist = currentQuizz.questions.includes(new mongoose.Types.ObjectId(question));
-    if ((option === 1 && isQuestionExist) || (option === 2 && !isQuestionExist)) {
+    const isQuestionExist = currentQuizz.questions.includes(question);
+    if ((option === Option.ADD && isQuestionExist) || (option === Option.REMOVE && !isQuestionExist)) {
       throw new BadRequestException(isQuestionExist ? 'question-existed' : 'question-not-existed');
     }
-    const updateOperation = option === 1 ? { $push: { questions: question } } : { $pull: { questions: question } };
+    const updateOperation =
+      option === Option.ADD ? { $push: { questions: question } } : { $pull: { questions: question } };
     return await this.quizzRepository.update(id, updateOperation);
   }
 

@@ -1,26 +1,22 @@
-export const userPopulate = [
-  // { path: 'enroll', select: 'name' },
-  // { path: 'wishlist', select: 'name' },
-  { path: 'major', select: 'title' },
-];
+export const userPopulate = [{ path: 'enroll', select: 'name' }, { path: 'courseInfo' }, { path: 'major', select: 'title' }];
 
 export const coursePopulate = [
-  // { path: 'quizz', select: 'name' },
-  // { path: 'chapters', select: 'title' },
+  { path: 'quizz', select: 'name' },
+  { path: 'chapters', select: 'title' },
   { path: 'major', select: 'title' },
 ];
 
 export const quizzPopulate = [
-  // { path: 'questions', select: '-outcome' },
+  { path: 'questions', select: '-outcome' },
   { path: 'course', select: 'name' },
-  // {
-  //   path: 'outcomeList',
-  //   populate: [
-  //     { path: 'user', select: 'email' },
-  //     { path: 'outcome', select: 'score' },
-  //     { path: 'quizz', select: 'name' },
-  //   ],
-  // },
+  {
+    path: 'outcomeList',
+    populate: [
+      { path: 'user', select: 'email' },
+      { path: 'outcome', select: 'score' },
+      { path: 'quizz', select: 'name' },
+    ],
+  },
 ];
 
 export const questionPopulate = [{ path: 'createdBy', select: 'name' }];
@@ -32,7 +28,7 @@ export const outcomeListPopulate = [
 ];
 
 export const chapterPopulate = [
-  // { path: 'lessons', select: '-outcome' },
+  { path: 'lessons', select: '-outcome' },
   { path: 'course', select: 'name' },
 ];
 
