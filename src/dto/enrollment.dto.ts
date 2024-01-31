@@ -1,7 +1,7 @@
 import { IsMongoId, IsNotEmpty, IsNumber } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { PaginationDTO } from './common.dto';
 import { IsOptional } from 'class-validator';
+import { PaginationDTO } from './common.dto';
 
 export class EnrollmentDTO {
   @ApiProperty()

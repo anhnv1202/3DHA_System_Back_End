@@ -39,10 +39,10 @@ export class DiscountService {
     try {
       const course = await this.courseRepository.findById(data.course);
       const updatedDiscount = course.discount
-        ? await this.discountsRepository.update(course.discount._id, data)
+        ? await this.discountsRepository.update(course.discount._id, data,session)
         : (await this.courseRepository.update(data.course, {
             discount: (await this.discountsRepository.create(data)).toObject()._id,
-          }),
+          },session),
           null);
       await session.commitTransaction();
       return updatedDiscount;

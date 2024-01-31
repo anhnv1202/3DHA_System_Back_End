@@ -68,7 +68,7 @@ export class EnrollmentService {
             });
             const updateSold = await this.courseRepository.update(current.course._id, {
               $inc: { sold: 1 },
-            });
+            },session);
             if (!updateSold) {
               throw new BadRequestException('update-sold-error');
             }
@@ -79,7 +79,7 @@ export class EnrollmentService {
           }
           const updateLimit = await this.discountRepository.update(courseObject.discount, {
             $inc: { limit: -1 },
-          });
+          },session);
           if (!updateLimit) {
             throw new BadRequestException('update-limit-error');
           }
@@ -93,7 +93,7 @@ export class EnrollmentService {
           });
           const updateSold = await this.courseRepository.update(current.course._id, {
             $inc: { sold: 1 },
-          });
+          },session);
           if (!updateSold) {
             throw new BadRequestException('update-sold-error');
           }
@@ -113,9 +113,13 @@ export class EnrollmentService {
         }
         couponPromotion = currentCoupon.promotion;
         lastCoursePrice = parseFloat((totalCoursePrice * (1 - currentCoupon.promotion / 100)).toFixed(2));
-        const updateLimit = await this.couponsRepository.update(data.coupon, {
-          $inc: { limit: -1 },
-        });
+        const updateLimit = await this.couponsRepository.update(
+          data.coupon,
+          {
+            $inc: { limit: -1 },
+          },
+          session,
+        );
         if (!updateLimit) {
           throw new BadRequestException('update-limit-error');
         }
@@ -142,87 +146,58 @@ export class EnrollmentService {
     const session = await this.connection.startSession();
     session.startTransaction();
     try {
-      const currentEnrollment = (await this.enrollmentsRepository.update(id, { status: data.status })).toObject();
+      const currentEnrollment = (
+        await this.enrollmentsRepository.update(id, { status: data.status }, session)
+      ).toObject();
       const currentUser = (await this.userRepository.findById(user._id)).toObject();
       if (data.status === Payment.SUCCESSFUL) {
         const courseList = currentEnrollment.courseList;
-        await Promise.all(
-          courseList.map(async (element) => {
-            let adminReceipt = parseFloat((element.price * 0.15).toFixed(2));
-            const authorReceipt = parseFloat((element.price * (1 - 0.15)).toFixed(2));
-            adminReceipt = currentEnrollment.coupon
-              ? adminReceipt - parseFloat((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
-              : adminReceipt;
-            const currentBill = await this.billRepository.create({
+        for (const element of courseList) {
+          let adminReceipt = parseFloat((element.price * 0.15).toFixed(2));
+          const authorReceipt = parseFloat((element.price * (1 - 0.15)).toFixed(2));
+          adminReceipt = currentEnrollment.coupon
+            ? adminReceipt - parseFloat((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
+            : adminReceipt;
+          const currentBill = await this.billRepository.create(
+            {
               course: element.name,
               authorReceipt,
               adminReceipt,
-            });
-            const currentInvoice = await this.invoicesRepository.insertOrUpdate(
-              { user: element.author },
-              { $inc: { receipt: authorReceipt }, $push: { bills: currentBill._id.toString() } },
-              session,
-            );
-            if (!currentInvoice) {
-              throw new BadRequestException('create-invoice-error');
-            }
-            const adminInvoice = await this.invoicesRepository.update(invoiceAdmin.INVOICE_ID, {
+            },
+            session,
+          );
+          const currentInvoice = await this.invoicesRepository.insertOrUpdate(
+            { user: element.author },
+            { $inc: { receipt: authorReceipt }, $push: { bills: currentBill._id.toString() } },
+            session,
+          );
+          if (!currentInvoice) {
+            throw new BadRequestException('create-invoice-error');
+          }
+          const adminInvoice = await this.invoicesRepository.update(
+            invoiceAdmin.INVOICE_ID,
+            {
               $inc: { receipt: adminReceipt },
               $push: { bills: currentBill._id.toString() },
-              session,
-            });
-            if (!adminInvoice) {
-              throw new BadRequestException('create-invoice-error');
-            }
-          }),
-        );
-
-        // const invoicePromises = [];
-        // for (const element of courseList) {
-        //   let adminReceipt = parseFloat((element.price * 0.15).toFixed(2));
-        //   const authorReceipt = parseFloat((element.price * (1 - 0.15)).toFixed(2));
-        //   adminReceipt = currentEnrollment.coupon
-        //     ? adminReceipt - parseFloat((currentEnrollment.totalPrice - currentEnrollment.lastPrice).toFixed(2))
-        //     : adminReceipt;
-        //   const currentBill = await this.billRepository.create({
-        //     course: element.name,
-        //     authorReceipt,
-        //     adminReceipt,
-        //   });
-        //  const existInvoice = await this.invoicesRepository.findOne({ user: element.author });
-        // existInvoice
-        // ? await this.invoicesRepository.update(existInvoice._id, {
-        //     user: element.author,
-        //     $inc: { receipt: authorReceipt },
-        //     $push: { bills: currentBill._id.toString() },
-        //   })
-        // : await this.invoicesRepository.create({
-        //     user: element.author,
-        //     receipt: authorReceipt,
-        //     $push: { bills: currentBill._id.toString() },
-        //   });
-        //   if (!currentInvoice) {
-        //     throw new BadRequestException('create-invoice-error');
-        //   }
-        //   const adminInvoice = await this.invoicesRepository.update(invoiceAdmin.INVOICE_ID, {
-        //     $inc: { receipt: adminReceipt },
-        //     $push: { bills: currentBill._id.toString() },
-        //     session,
-        //   });
-        //   if (!adminInvoice) {
-        //     throw new BadRequestException('create-invoice-error');
-        //   }
-        //   invoicePromises.push(Promise.resolve());
-        // }
-        // await Promise.all(invoicePromises);
+            },
+            session,
+          );
+          if (!adminInvoice) {
+            throw new BadRequestException('create-invoice-error');
+          }
+        }
         currentUser.courseInfo.forEach(async (courseInfo: CourseInfo) => {
           if (courseInfo.status === CourseStatus.WISHLIST) {
             courseInfo.status = CourseStatus.ENROLL;
           }
         });
-        await this.userRepository.update(user._id, {
-          courseInfo: currentUser.courseInfo,
-        });
+        await this.userRepository.update(
+          user._id,
+          {
+            courseInfo: currentUser.courseInfo,
+          },
+          session,
+        );
       }
       await session.commitTransaction();
       return await this.userRepository.findById(user._id);

@@ -37,7 +37,7 @@ export class WishlistService {
         option === Option.ADD
           ? { $push: { courseInfo: { course, status: CourseStatus.WISHLIST } } }
           : { $pull: { courseInfo: { course } } };
-      await this.userRepository.update(user._id, updateOperation);
+      await this.userRepository.update(user._id, updateOperation, session);
       await session.commitTransaction();
       return await this.userRepository.findById(user._id);
     } catch (e) {
@@ -67,7 +67,7 @@ export class WishlistService {
               : CourseStatus.WISHLIST,
         };
         currentUser.courseInfo[courseInfoIndex] = updatedCourseInfo;
-        await this.userRepository.update(user._id, { courseInfo: updatedCourseInfo });
+        await this.userRepository.update(user._id, { courseInfo: updatedCourseInfo }, session);
       }
       await session.commitTransaction();
       return await this.userRepository.findById(user._id);
