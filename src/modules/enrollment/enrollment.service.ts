@@ -186,6 +186,7 @@ export class EnrollmentService {
           courseInfo: currentUser.courseInfo,
         });
       }
+      await session.commitTransaction();
       return await this.userRepository.findById(user._id);
     } catch (e) {
       await session.abortTransaction();
