@@ -1,10 +1,11 @@
 import { Option, SEARCH_BY } from '@common/constants/global.const';
 import { coursePopulate } from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
+import { LikeStatus } from '@common/interfaces/likeStatus';
 import { Course } from '@models/course.models';
 import { User } from '@models/user.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO } from 'src/dto/course.dto';
+import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO, UpdateLikeInCourseDTO } from 'src/dto/course.dto';
 import { CoursesRepository } from './course.repository';
 
 @Injectable()
@@ -57,4 +58,22 @@ export class CourseService {
     }
     return await this.courseRepository.softDelete(id);
   }
+
+  async updateLike(user: User, id: string, data: UpdateLikeInCourseDTO): Promise<Course | null> {
+    const currentCourse = (await this.courseRepository.findById(id, coursePopulate)).toObject();
+    const currentUserIndex = currentCourse.likeInfo.findIndex(
+      (likeInfo: LikeStatus) => likeInfo.user.toString() === user._id.toString(),
+    );
+    let updateData = {};
+    updateData = { $push: { likeInfo: { user: user._id, status: data.option } } };
+    if (currentUserIndex !== -1) {
+      const currentUserStatus = currentCourse.likeInfo[currentUserIndex].status;
+      updateData =
+        currentUserStatus === data.option
+          ? { $pull: { likeInfo: { user: user._id } } }
+          : { likeInfo: { ...currentCourse.likeInfo[currentUserIndex], status: data.option } };
+    }
+    return await this.courseRepository.update(id, updateData);
+  }
 }
+   

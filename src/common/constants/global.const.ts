@@ -142,6 +142,7 @@ export const SEARCH_BY = {
   ENROLLMENT: ['orderBy', 'coupon', 'totalPrice', 'course', 'status'],
   BILL: ['course', 'authorReceipt', 'adminReceipt'],
   INVOICE: ['user', 'receipt', 'bills'],
+  RATING: ['postedBy', 'star'],
 };
 
 export const invoiceAdmin = {

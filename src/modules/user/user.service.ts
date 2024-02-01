@@ -4,6 +4,7 @@ import { ItemNotFoundMessage } from '@common/utils/helper.utils';
 import { User } from '@models/user.model';
 import { CloudinaryService } from '@modules/cloudinary/cloudinary.service';
 import { BadRequestException, Injectable } from '@nestjs/common';
+import { ClientSession } from 'mongoose';
 import { ChangeActiveDTO } from 'src/dto/common.dto';
 import { UpdateUserDTO } from 'src/dto/user.dto';
 import { UsersRepository } from './user.repository';
@@ -40,8 +41,8 @@ export class UserService {
     return await this.userRepository.create({ ...data });
   }
 
-  async updateOneBy(id: string, data: Partial<User>): Promise<User | null> {
-    return await this.userRepository.update(id, { ...data });
+  async updateOneBy(id: string, data: Partial<User>, session?: ClientSession): Promise<User | null> {
+    return await this.userRepository.update(id, { ...data }, session);
   }
 
   async deleteUserNotConfirm(): Promise<void> {
