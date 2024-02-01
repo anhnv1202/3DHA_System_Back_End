@@ -10,7 +10,7 @@ import { Course } from '@models/course.models';
 import { User } from '@models/user.model';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
-import { CourseDTO, CourseQueryDTO, UpdateCourseDTO } from 'src/dto/course.dto';
+import { CourseDTO, CourseQueryDTO, UpdateCourseDTO, UpdateLikeInCourseDTO } from 'src/dto/course.dto';
 import { UpdateChapterInCourseDTO } from './../../dto/course.dto';
 import { CourseService } from './course.service';
 
@@ -66,6 +66,15 @@ export class CourseController {
     @Profile() user: User,
   ) {
     return this.courseService.updateChapter(user, params.id, body);
+  }
+
+  @Put('update-like/:id')
+  @ApiBearerAuth()
+  @ApiParam({ name: 'id', type: String, required: true })
+  @ApiBody({ type: UpdateLikeInCourseDTO })
+  @ApiNormalResponse({ model: Course, type: ResponseType.Ok })
+  updateLikeInCourse(@Body() body: UpdateLikeInCourseDTO, @Param() params: { id: string }, @Profile() user: User) {
+    return this.courseService.updateLike(user, params.id, body);
   }
 
   @Delete('delete/:id')

@@ -48,7 +48,7 @@ export class Course extends Document {
   ratings: PopulatedDoc<Rating, Types.ObjectId>[];
 
   @ApiProperty()
-  @Prop()
+  @Prop({ type: Number, default: 0 })
   totalRatings: number;
 
   @ApiProperty()
@@ -67,7 +67,7 @@ export class Course extends Document {
     required: false,
     default: [],
   })
-  likes: LikeStatus[];
+  likeInfo: LikeStatus[];
 
   @Prop({ type: Date, default: null })
   deletedAt: Date | null;
