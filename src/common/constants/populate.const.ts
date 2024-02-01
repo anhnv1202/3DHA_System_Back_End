@@ -12,7 +12,7 @@ export const coursePopulate = [
 
 export const quizzPopulate = [
   // { path: 'questions', select: '-outcome' },
-  { path: 'course', select: 'name' },
+  { path: 'chapter', select: 'name' },
   // {
   //   path: 'outcomeList',
   //   populate: [
@@ -22,6 +22,8 @@ export const quizzPopulate = [
   //   ],
   // },
 ];
+
+export const lessonPopulate = [{ path: 'chapter', select: 'name' }];
 
 export const questionPopulate = [{ path: 'createdBy', select: 'name' }];
 
@@ -39,3 +41,7 @@ export const chapterPopulate = [
 export const discountPopulate = [{ path: 'course', select: 'name' }];
 
 export const authorFromCoursePopulate = [{ path: 'course', populate: 'author' }];
+
+export const authorFromChapterPopulate = [
+  { path: 'chapter', populate: [{ path: 'course', populate: { path: 'author' } }] },
+];

@@ -28,6 +28,7 @@ import { WishlistModule } from './modules/wishlist/wishlist.module';
 import { CouponModule } from './modules/coupon/coupon.module';
 import { DiscountModule } from './modules/discount/discount.module';
 import { FileModule } from './modules/file/file.module';
+import { LessonModule } from './modules/lesson/lesson.module';
 
 @Module({
   imports: [
@@ -91,6 +92,7 @@ import { FileModule } from './modules/file/file.module';
     CouponModule,
     DiscountModule,
     FileModule,
+    LessonModule,
   ],
   controllers: [],
   providers: [],

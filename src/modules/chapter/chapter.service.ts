@@ -8,7 +8,7 @@ import { BadRequestException, Injectable, InternalServerErrorException } from '@
 import { InjectConnection } from '@nestjs/mongoose';
 import mongoose, { Connection } from 'mongoose';
 import { ChapterDTO, UpdateChapterDTO, UpdateQuizzInChapterDTO } from 'src/dto/chapter.dto';
-import { ChaptersRepository } from './chapter.respository';
+import { ChaptersRepository } from './chapter.repository';
 
 @Injectable()
 export class ChapterService {
