@@ -208,15 +208,11 @@ export class BaseRepository<T extends Document> {
 
   async insertOrUpdate(filterQuery: FilterQuery<T>, payload: any, session?: ClientSession): Promise<any> {
     const _insertOrUpdateModel = async (filterQuery: FilterQuery<T>, data: any, session: ClientSession) => {
-      return await this.model.findOneAndUpdate(
-        filterQuery,
-        { $set: data },
-        {
-          new: true,
-          session,
-          upsert: true,
-        },
-      );
+      return await this.model.findOneAndUpdate(filterQuery, data, {
+        new: true,
+        session,
+        upsert: true,
+      });
     };
 
     if (session) {

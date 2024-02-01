@@ -1,11 +1,10 @@
-import { SEARCH_BY } from '@common/constants/global.const';
+import { Option, SEARCH_BY } from '@common/constants/global.const';
 import { coursePopulate } from '@common/constants/populate.const';
 import { Pagination, PaginationResult } from '@common/interfaces/filter.interface';
 import { LikeStatus } from '@common/interfaces/likeStatus';
 import { Course } from '@models/course.models';
 import { User } from '@models/user.model';
 import { BadRequestException, Injectable } from '@nestjs/common';
-import mongoose from 'mongoose';
 import { CourseDTO, UpdateChapterInCourseDTO, UpdateCourseDTO } from 'src/dto/course.dto';
 import { CoursesRepository } from './course.repository';
 
@@ -44,11 +43,11 @@ export class CourseService {
     if (currentCourse.author._id.toString() !== user._id) {
       throw new BadRequestException('permission-denied');
     }
-    const isChapterExist = currentCourse.chapters.includes(new mongoose.Types.ObjectId(chapter));
-    if ((option === 1 && isChapterExist) || (option === 2 && !isChapterExist)) {
+    const isChapterExist = currentCourse.chapters.includes(chapter);
+    if ((option === Option.ADD && isChapterExist) || (option === Option.REMOVE && !isChapterExist)) {
       throw new BadRequestException(isChapterExist ? 'chapter-existed' : 'chapter-not-existed');
     }
-    const updateOperation = option === 1 ? { $push: { chapters: chapter } } : { $pull: { chapters: chapter } };
+    const updateOperation = option === Option.ADD ? { $push: { chapters: chapter } } : { $pull: { chapters: chapter } };
     return await this.courseRepository.update(id, updateOperation);
   }
 

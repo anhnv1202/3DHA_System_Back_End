@@ -1,4 +1,4 @@
-import { CourseStatus } from '@common/constants/global.const';
+import { CourseStatus, Option } from '@common/constants/global.const';
 import { User } from '@models/user.model';
 import { CoursesRepository } from '@modules/course/course.repository';
 import { UsersRepository } from '@modules/user/user.repository';
@@ -30,14 +30,14 @@ export class WishlistService {
       }
       const currentUser = (await this.userRepository.findById(user._id)).toObject();
       const isCourseExist = currentUser.courseInfo.some((courseInfo) => courseInfo.course.equals(course));
-      if ((option === 1 && isCourseExist) || (option === 2 && !isCourseExist)) {
-        throw new BadRequestException(option === 1 ? 'course-existed' : 'course-not-existed');
+      if ((option === Option.ADD && isCourseExist) || (option === Option.REMOVE && !isCourseExist)) {
+        throw new BadRequestException(option === Option.ADD ? 'course-existed' : 'course-not-existed');
       }
       const updateOperation =
-        option === 1
+        option === Option.ADD
           ? { $push: { courseInfo: { course, status: CourseStatus.WISHLIST } } }
           : { $pull: { courseInfo: { course } } };
-      await this.userRepository.update(user._id, updateOperation);
+      await this.userRepository.update(user._id, updateOperation, session);
       await session.commitTransaction();
       return await this.userRepository.findById(user._id);
     } catch (e) {
@@ -67,7 +67,7 @@ export class WishlistService {
               : CourseStatus.WISHLIST,
         };
         currentUser.courseInfo[courseInfoIndex] = updatedCourseInfo;
-        await this.userRepository.update(user._id, { courseInfo: updatedCourseInfo });
+        await this.userRepository.update(user._id, { courseInfo: updatedCourseInfo }, session);
       }
       await session.commitTransaction();
       return await this.userRepository.findById(user._id);

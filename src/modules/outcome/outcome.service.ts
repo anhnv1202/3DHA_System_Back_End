@@ -1,9 +1,12 @@
+import { CourseStatus } from '@common/constants/global.const';
 import { outcomeListPopulate } from '@common/constants/populate.const';
+import { CourseInfo } from '@common/interfaces/courseInfo';
 import { Question } from '@models/question.model';
 import { User } from '@models/user.model';
 import { OutcomeListsRepository } from '@modules/outcome-list/outcome-list.repository';
 import { QuestionsRepository } from '@modules/question/question.repository';
 import { QuizzsRepository } from '@modules/quizz/quizz.repository';
+import { UsersRepository } from '@modules/user/user.repository';
 import { BadRequestException, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
@@ -18,6 +21,7 @@ export class OutcomeService {
     private questionRepository: QuestionsRepository,
     private outcomeRepository: OutcomesRepository,
     private outcomeListRepository: OutcomeListsRepository,
+    private userRepository: UsersRepository,
     @InjectConnection()
     private readonly connection: Connection,
   ) {}
@@ -36,13 +40,19 @@ export class OutcomeService {
       ).toObject();
       if (!quizz) throw new BadRequestException('cannot-find-quizz');
 
-      // if (!user.enroll.includes(quizz.course)) {
-      //   throw new BadRequestException('permission-denied');
-      // }
+      const currentUser = (await this.userRepository.findById(user._id, ['courseInfo.course'])).toObject();
+
+      const wishlist: CourseInfo[] = currentUser.courseInfo.filter(
+        (courseInfo: CourseInfo) => courseInfo.status === CourseStatus.ENROLL,
+      );
+      const isCourseInWishlist = wishlist.some((info) => info.course.equals(quizz.course));
+      if (!isCourseInWishlist) {
+        throw new BadRequestException('permission-denied');
+      }
       const userExistsInOutcomeList = quizz.outcomeList.some((element) => element.user._id === user._id);
       if (!userExistsInOutcomeList) {
         const outcomeData = { user: user._id, quizz: quizz._id };
-        await this.outcomeListRepository.create(outcomeData);
+        await this.outcomeListRepository.create(outcomeData, session);
       }
 
       const arrQuestion = quizz.questions;
@@ -85,21 +95,29 @@ export class OutcomeService {
       const correctAnswer = numberQuestion - wrongAnswers - noAnswers;
       const score = (correctAnswer / numberQuestion) * 10;
       const outcomeData = { numberQuestion, noAnswers, wrongAnswers, score };
-      const outcome = await this.outcomeRepository.create(outcomeData);
+      const outcome = await this.outcomeRepository.create(outcomeData, session);
       const currentOutcomeList = await this.outcomeListRepository.findOne({ user: user._id });
       if (!currentOutcomeList) throw new BadRequestException('cannot-find-outcomeList');
 
-      const outcomeList = await this.outcomeListRepository.update(currentOutcomeList._id, {
-        ...(outcome && { $push: { outcome: outcome._id } }),
-      });
+      const outcomeList = await this.outcomeListRepository.update(
+        currentOutcomeList._id,
+        {
+          ...(outcome && { $push: { outcome: outcome._id } }),
+        },
+        session,
+      );
 
       if (!outcomeList) throw new BadRequestException('update-outcomeList-error');
       const quizz = await this.quizzRepository.findById(quizzId.toString());
       const outcomeListCurrent = quizz.outcomeList;
       if (!outcomeListCurrent.includes(outcomeList._id)) {
-        const updateOutcomeList = await this.quizzRepository.update(quizzId, {
-          ...(outcomeList && { $push: { outcomeList: outcomeList._id } }),
-        });
+        const updateOutcomeList = await this.quizzRepository.update(
+          quizzId,
+          {
+            ...(outcomeList && { $push: { outcomeList: outcomeList._id } }),
+          },
+          session,
+        );
         if (!updateOutcomeList) throw new BadRequestException('update-quizz-error');
       }
       await session.commitTransaction();
