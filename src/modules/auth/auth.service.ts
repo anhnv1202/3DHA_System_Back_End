@@ -33,10 +33,13 @@ export class AuthService {
         { secret: process.env.JWT_SECRET_KEY, expiresIn: 1000 },
       );
 
-      this.tokenService.createOneBy({
-        token,
-        expiresAt: new Date(Date.now() + 1000),
-      });
+      this.tokenService.createOneBy(
+        {
+          token,
+          expiresAt: new Date(Date.now() + 1000),
+        },
+        session,
+      );
 
       this._mailService.sendConfirmationEmailRegister(
         body.email,
@@ -100,8 +103,8 @@ export class AuthService {
         throw new BadRequestException(ItemNotFoundMessage('crUser'));
       }
 
-      await this.tokenService.removeById(tokenExisted._id);
-      await this.userService.updateOneBy(crUser.id, { status: true });
+      await this.tokenService.removeById(tokenExisted._id, session);
+      await this.userService.updateOneBy(crUser.id, { status: true }, session);
 
       await session.commitTransaction();
 
@@ -129,10 +132,13 @@ export class AuthService {
         { id: user._id, role: user.role, email, status: user.status },
         { secret: process.env.JWT_SECRET_KEY, expiresIn: TEN_MINUTES },
       );
-      this.tokenService.createOneBy({
-        token,
-        expiresAt: new Date(Date.now() + TEN_MINUTES),
-      });
+      this.tokenService.createOneBy(
+        {
+          token,
+          expiresAt: new Date(Date.now() + TEN_MINUTES),
+        },
+        session,
+      );
       this._mailService.sendConfirmationEmailForgot(
         email,
         user.username,
@@ -169,7 +175,7 @@ export class AuthService {
 
         if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
 
-        const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true });
+        const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword, status: true }, session);
         await session.commitTransaction();
         return userRes;
       }
@@ -187,7 +193,7 @@ export class AuthService {
         throw new BadRequestException('auth-password-not-same');
       }
       if (newPassword === crUser.password) throw new BadRequestException('validation-old-password-equal');
-      const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword });
+      const userRes = await this.userService.updateOneBy(crUser.id, { password: newPassword }, session);
       await session.commitTransaction();
       return userRes;
     } catch (e) {
