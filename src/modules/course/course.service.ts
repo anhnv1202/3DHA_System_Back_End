@@ -76,4 +76,3 @@ export class CourseService {
     return await this.courseRepository.update(id, updateData);
   }
 }
-   
