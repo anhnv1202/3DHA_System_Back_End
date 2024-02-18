@@ -137,12 +137,12 @@ export const SEARCH_BY = {
   QUIZZ: ['name'],
   OUTCOME_LIST: ['user'],
   CHAPTER: ['title'],
-  COUPON: ['name', 'promotion', 'limit', 'expired'],
-  DISCOUNT: ['promotion', 'limit', 'expired', 'course'],
-  ENROLLMENT: ['orderBy', 'coupon', 'totalPrice', 'course', 'status'],
+  COUPON: ['name', 'promotion'],
+  DISCOUNT: ['promotion', 'course'],
+  ENROLLMENT: ['totalPrice', 'course', 'status'],
   BILL: ['course', 'authorReceipt', 'adminReceipt'],
   INVOICE: ['user', 'receipt', 'bills'],
-  RATING: ['postedBy', 'star'],
+  RATING: ['star'],
 };
 
 export const invoiceAdmin = {
