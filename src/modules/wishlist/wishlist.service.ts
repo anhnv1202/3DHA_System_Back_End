@@ -37,9 +37,8 @@ export class WishlistService {
         option === Option.ADD
           ? { $push: { courseInfo: { course, status: CourseStatus.WISHLIST } } }
           : { $pull: { courseInfo: { course } } };
-      await this.userRepository.update(user._id, updateOperation, session);
       await session.commitTransaction();
-      return await this.userRepository.findById(user._id);
+      return await this.userRepository.update(user._id, updateOperation, session);
     } catch (e) {
       await session.abortTransaction();
       throw new InternalServerErrorException(e);
