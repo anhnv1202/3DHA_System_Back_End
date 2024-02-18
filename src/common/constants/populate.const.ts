@@ -1,4 +1,8 @@
-export const userPopulate = [{ path: 'enroll', select: 'name' }, { path: 'courseInfo' }, { path: 'major', select: 'title' }];
+export const userPopulate = [
+  { path: 'enroll', select: 'name' },
+  { path: 'courseInfo' },
+  { path: 'major', select: 'title' },
+];
 
 export const coursePopulate = [
   { path: 'quizz', select: 'name' },

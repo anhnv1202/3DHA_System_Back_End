@@ -37,7 +37,7 @@ export class QuizzService {
     session.startTransaction();
     try {
       const quizz = await this.quizzRepository.create(data);
-      await this.courseRepository.update(data.chapter, { $push: { quizzs: quizz } },session);
+      await this.courseRepository.update(data.chapter, { $push: { quizzs: quizz } }, session);
       await session.commitTransaction();
       return quizz;
     } catch (e) {

@@ -37,7 +37,7 @@ export class ChapterService {
     session.startTransaction();
     try {
       const chapter = await this.chapterRepository.create(data);
-      await this.courseRepository.update(data.course, { $push: { chapters: chapter } },session);
+      await this.courseRepository.update(data.course, { $push: { chapters: chapter } }, session);
       await session.commitTransaction();
       return chapter;
     } catch (e) {

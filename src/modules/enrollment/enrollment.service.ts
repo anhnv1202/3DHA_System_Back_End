@@ -66,9 +66,13 @@ export class EnrollmentService {
               price: current.course.price,
               author: current.course.author.toString(),
             });
-            const updateSold = await this.courseRepository.update(current.course._id, {
-              $inc: { sold: 1 },
-            },session);
+            const updateSold = await this.courseRepository.update(
+              current.course._id,
+              {
+                $inc: { sold: 1 },
+              },
+              session,
+            );
             if (!updateSold) {
               throw new BadRequestException('update-sold-error');
             }
@@ -77,9 +81,13 @@ export class EnrollmentService {
           if (courseObject.discount.limit <= 0 || new Date(courseObject.discount.expired) < new Date()) {
             throw new BadRequestException('discount-expired');
           }
-          const updateLimit = await this.discountRepository.update(courseObject.discount, {
-            $inc: { limit: -1 },
-          },session);
+          const updateLimit = await this.discountRepository.update(
+            courseObject.discount,
+            {
+              $inc: { limit: -1 },
+            },
+            session,
+          );
           if (!updateLimit) {
             throw new BadRequestException('update-limit-error');
           }
@@ -91,9 +99,13 @@ export class EnrollmentService {
             lastPrice: lastPrice,
             author: current.course.author.toString(),
           });
-          const updateSold = await this.courseRepository.update(current.course._id, {
-            $inc: { sold: 1 },
-          },session);
+          const updateSold = await this.courseRepository.update(
+            current.course._id,
+            {
+              $inc: { sold: 1 },
+            },
+            session,
+          );
           if (!updateSold) {
             throw new BadRequestException('update-sold-error');
           }
