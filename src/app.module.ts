@@ -30,6 +30,7 @@ import { DiscountModule } from './modules/discount/discount.module';
 import { FileModule } from './modules/file/file.module';
 import { BillModule } from './modules/bill/bill.module';
 import { InvoiceModule } from './modules/invoice/invoice.module';
+import { RatingModule } from './modules/rating/rating.module';
 
 @Module({
   imports: [
@@ -96,6 +97,7 @@ import { InvoiceModule } from './modules/invoice/invoice.module';
     FileModule,
     BillModule,
     InvoiceModule,
+    RatingModule,
   ],
   controllers: [],
   providers: [],

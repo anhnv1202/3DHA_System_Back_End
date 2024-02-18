@@ -1,6 +1,7 @@
 import { Option } from '@common/constants/global.const';
 import { IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from '@common/validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { IsBoolean } from 'class-validator';
 import { PaginationDTO } from './common.dto';
 
 export class CourseDTO {
@@ -98,4 +99,11 @@ export class UpdateChapterInCourseDTO {
   @IsMongoId()
   @IsNotEmpty()
   chapter: string;
+}
+
+export class UpdateLikeInCourseDTO {
+  @ApiProperty()
+  @IsBoolean()
+  @IsNotEmpty()
+  option: boolean;
 }
